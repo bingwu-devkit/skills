@@ -28,3 +28,9 @@
 [submodule "sources/awesome-copilot"]
 	path = sources/awesome-copilot
 	url = https://github.com/github/awesome-copilot.git
+[submodule "sources/imgrelay"]
+	path = sources/imgrelay
+	url = https://github.com/bingwu-devkit/imgrelay.git
+[submodule "sources/ian-xiaohei-illustrations"]
+	path = sources/ian-xiaohei-illustrations
+	url = https://github.com/helloianneo/ian-xiaohei-illustrations.git

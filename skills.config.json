@@ -178,5 +178,37 @@
   "show-me": {
     "submodule": "sources/humanlayer-skills",
     "skillPath": "plugins/show-me/skills/show-me"
+  },
+  "imgrelay": {
+    "submodule": "sources/imgrelay",
+    "skillPath": "skills/imgrelay",
+    "requirements": [
+      {
+        "title": "Node.js 22.20+（22.x）或 24.x 与 npm",
+        "description": "安装和运行 ImgRelay CLI 时需要受支持的 Node.js 版本及 npm。",
+        "url": "https://nodejs.org/en/download"
+      },
+      {
+        "title": "ImgRelay CLI",
+        "description": "通过 npm install -g imgrelay 安装 CLI，用于查询配置、生成图片和保存结果。",
+        "url": "https://www.npmjs.com/package/imgrelay"
+      },
+      {
+        "title": "供应商配置",
+        "description": "首次生图前通过 imgrelay provider add <名称> 配置中转站地址、API Key 和默认模型。",
+        "url": "https://github.com/bingwu-devkit/imgrelay#2-配置中转站"
+      }
+    ]
+  },
+  "ian-xiaohei-illustrations": {
+    "submodule": "sources/ian-xiaohei-illustrations",
+    "skillPath": "ian-xiaohei-illustrations",
+    "requirements": [
+      {
+        "title": "内置 image_gen 图像工具",
+        "description": "生成或编辑配图时需要环境提供内置 image_gen 工具；仅输出配图策略时无需生图工具。",
+        "url": "https://github.com/helloianneo/ian-xiaohei-illustrations"
+      }
+    ]
   }
 }

@@ -12,6 +12,8 @@
 | [`excalidraw-diagram-generator`](skills/excalidraw-diagram-generator/) | 根据自然语言生成 Excalidraw 流程图、架构图和关系图。 |
 | [`gitlab-url-guard`](skills/gitlab-url-guard/)     | 规范化并校验 MR、流水线、作业和提交链接，保留源分支并登记流水线成功后自动合并。       |
 | [`grilling`](skills/grilling/)                     | 通过结构化的深入访谈，系统梳理计划、设计或决策中的关键问题。                          |
+| [`ian-xiaohei-illustrations`](skills/ian-xiaohei-illustrations/) | 为中文文章规划并生成 Ian 小黑风格的 16:9 白底手绘正文配图。 |
+| [`imgrelay`](skills/imgrelay/)                     | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。                          |
 | [`tdd`](skills/tdd/)                               | 通过红—绿循环按公共接口逐步开发，并确保测试聚焦可观察行为。                          |
 | [`weekly-git-report`](skills/weekly-git-report/)   | 根据 Git 提交记录生成、整理或保存周报。                                               |
 
@@ -31,3 +33,15 @@
 
 链接构造、规范化和校验通过 Python 3 脚本运行；执行 GitLab MR 读写或回读校验时
 还需要安装并认证 GitLab CLI（`glab`）。
+
+### `imgrelay`
+
+需要 Node.js 22.20+（22.x）或 24.x，并通过 `npm install -g imgrelay` 安装 CLI。
+首次生图前运行 `imgrelay provider add <名称>`，配置中转站地址、API Key 和默认模型；
+详见[上游配置说明](https://github.com/bingwu-devkit/imgrelay#2-配置中转站)。
+
+### `ian-xiaohei-illustrations`
+
+生成或编辑配图时需要运行环境提供内置 `image_gen` 工具；仅规划配图策略时无需生图工具。
+Skill 由 [Ian](https://github.com/helloianneo) 创建，随附示例图用于风格校准；
+许可声明见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
