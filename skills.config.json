@@ -86,7 +86,7 @@
     "skillPath": "skills/excalidraw-diagram-generator"
   },
   "gitlab-release-workflow": {
-    "category": "code-collaboration",
+    "category": "repository-workflow",
     "skillDependencies": [
       "gitlab-url-guard"
     ],
@@ -114,7 +114,7 @@
     ]
   },
   "gitlab-url-guard": {
-    "category": "code-collaboration",
+    "category": "repository-workflow",
     "requirements": [
       {
         "title": "Git",

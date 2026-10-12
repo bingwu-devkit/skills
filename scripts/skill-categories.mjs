@@ -1,6 +1,6 @@
 export const skillCategories = Object.freeze([
   { id: 'development', label: '开发工程' },
-  { id: 'code-collaboration', label: '代码协作' },
+  { id: 'repository-workflow', label: '仓库工作流' },
   { id: 'diagramming', label: '图表可视化' },
   { id: 'visual-design', label: '视觉创作' },
   { id: 'productivity', label: '效率与思考' },

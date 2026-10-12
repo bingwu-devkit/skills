@@ -16,8 +16,8 @@
       ]
     },
     {
-      "name": "code-collaboration",
-      "description": "代码协作",
+      "name": "repository-workflow",
+      "description": "仓库工作流",
       "source": "./",
       "strict": false,
       "skills": [
