@@ -1,9 +1,10 @@
 export const skillCategories = Object.freeze([
   { id: 'development', label: '开发工程' },
+  { id: 'gitlab-workflow', label: 'GitLab 工作流' },
   { id: 'diagramming', label: '图表可视化' },
   { id: 'visual-design', label: '视觉创作' },
   { id: 'productivity', label: '效率与思考' },
-  { id: 'other', label: '未分类' },
+  { id: 'other', label: '其他' },
 ].map(category => Object.freeze(category)));
 
 export function getSkillCategory(skillName, config = {}) {

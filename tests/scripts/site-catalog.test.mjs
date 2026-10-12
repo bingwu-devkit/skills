@@ -214,7 +214,7 @@ describe('loadCatalog', () => {
     expect(catalog[0].files.map(file => file.path)).toEqual(['README.md', 'SKILL.md']);
     expect(catalog[0].searchText).toContain('Alpha setup');
     expect(catalog[0].searchText).toContain('开发工程');
-    expect(catalog[1]).toMatchObject({ category: 'other', categoryLabel: '未分类' });
+    expect(catalog[1]).toMatchObject({ category: 'other', categoryLabel: '其他' });
     expect(catalog[0].updatedAt).toMatch(/^\d{4}-/);
   });
 

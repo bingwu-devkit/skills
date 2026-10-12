@@ -10,10 +10,19 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/agent-git",
-        "./skills/gitlab-release-workflow",
-        "./skills/gitlab-url-guard",
+        "./skills/grilling",
+        "./skills/show-me",
         "./skills/tdd"
+      ]
+    },
+    {
+      "name": "gitlab-workflow",
+      "description": "GitLab 工作流",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/gitlab-release-workflow",
+        "./skills/gitlab-url-guard"
       ]
     },
     {
@@ -25,8 +34,7 @@
         "./skills/archify",
         "./skills/drawio-skill",
         "./skills/excalidraw-diagram",
-        "./skills/excalidraw-diagram-generator",
-        "./skills/show-me"
+        "./skills/excalidraw-diagram-generator"
       ]
     },
     {
@@ -47,8 +55,16 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/grilling",
         "./skills/weekly-git-report"
+      ]
+    },
+    {
+      "name": "other",
+      "description": "其他",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-git"
       ]
     }
   ]

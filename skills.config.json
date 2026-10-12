@@ -1,6 +1,6 @@
 {
   "agent-git": {
-    "category": "development",
+    "category": "other",
     "submodule": "sources/agent-git",
     "skillPath": "packages/skill/skills/agent-git",
     "requirements": [
@@ -86,7 +86,7 @@
     "skillPath": "skills/excalidraw-diagram-generator"
   },
   "gitlab-release-workflow": {
-    "category": "development",
+    "category": "gitlab-workflow",
     "skillDependencies": [
       "gitlab-url-guard"
     ],
@@ -114,7 +114,7 @@
     ]
   },
   "gitlab-url-guard": {
-    "category": "development",
+    "category": "gitlab-workflow",
     "requirements": [
       {
         "title": "Git",
@@ -134,7 +134,7 @@
     ]
   },
   "grilling": {
-    "category": "productivity",
+    "category": "development",
     "submodule": "sources/mattpocock-skills",
     "skillPath": "skills/productivity/grilling"
   },
@@ -188,7 +188,7 @@
     ]
   },
   "show-me": {
-    "category": "diagramming",
+    "category": "development",
     "submodule": "sources/humanlayer-skills",
     "skillPath": "plugins/show-me/skills/show-me"
   },

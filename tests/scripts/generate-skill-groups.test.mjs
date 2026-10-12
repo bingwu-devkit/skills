@@ -31,7 +31,7 @@ describe('skill group manifest', () => {
     expect(manifest.plugins).toEqual([
       { name: 'development', description: '开发工程', source: './', strict: false, skills: ['./skills/alpha', './skills/beta'] },
       { name: 'diagramming', description: '图表可视化', source: './', strict: false, skills: ['./skills/zeta'] },
-      { name: 'other', description: '未分类', source: './', strict: false, skills: ['./skills/gamma'] },
+      { name: 'other', description: '其他', source: './', strict: false, skills: ['./skills/gamma'] },
     ]);
     expect(buildMarketplaceManifest(['alpha', 'zeta', 'beta', 'gamma'], config)).toEqual(manifest);
     expect(buildMarketplaceManifest([], {}).plugins).toEqual([]);

@@ -3,7 +3,7 @@
 本目录汇总仓库当前可安装的 Skill。通用安装方法见
 [`README.md`](README.md#快速开始)。
 
-网站提供“全部、开发工程、图表可视化、视觉创作、效率与思考”分类筛选，可与搜索组合使用。
+网站提供“全部、开发工程、GitLab 工作流、图表可视化、视觉创作、效率与思考、其他”分类筛选，可与搜索组合使用。
 分类在 [`skills.config.json`](skills.config.json) 中统一维护；修改后运行
 `pnpm run groups:generate` 更新安装菜单清单，维护方法见
 [`README.md`](README.md#维护-skill-分类)。
