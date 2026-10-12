@@ -16,8 +16,8 @@
       ]
     },
     {
-      "name": "gitlab-workflow",
-      "description": "GitLab 工作流",
+      "name": "code-collaboration",
+      "description": "代码协作",
       "source": "./",
       "strict": false,
       "skills": [

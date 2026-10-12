@@ -111,13 +111,13 @@ frontmatter 原样。改动应先在来源项目中完成，再同步到本仓�
 | category | 网站名称 |
 | --- | --- |
 | `development` | 开发工程 |
-| `gitlab-workflow` | GitLab 工作流 |
+| `code-collaboration` | 代码协作 |
 | `diagramming` | 图表可视化 |
 | `visual-design` | 视觉创作 |
 | `productivity` | 效率与思考 |
 | `other` 或未配置 | 其他 |
 
-`gitlab-workflow` 收纳 GitLab MR、流水线和发布相关的项目工作流，按项目需要安装。
+`code-collaboration` 收纳 GitHub PR、GitLab MR、代码审查、合并及相关协作工作流，按项目需要安装。
 
 分类 ID 和显示名统一定义在 `scripts/skill-categories.mjs`。添加、删除 Skill
 或调整分类后，生成并提交 CLI 分组清单：
