@@ -117,8 +117,6 @@ frontmatter 原样。改动应先在来源项目中完成，再同步到本仓�
 | `productivity` | 效率与思考 |
 | `other` 或未配置 | 其他 |
 
-`repository-workflow` 收纳 GitHub PR、GitLab MR、Issue、分支管理、代码审查、合并及仓库自动化相关工作流，按项目需要安装。
-
 分类 ID 和显示名统一定义在 `scripts/skill-categories.mjs`。添加、删除 Skill
 或调整分类后，生成并提交 CLI 分组清单：
 
