@@ -189,6 +189,7 @@ describe('loadCatalog', () => {
       'skills/beta/SKILL.md': '---\nname: beta\ndescription: Beta description\n---\n\nBeta body\n',
     }, {
       alpha: {
+        category: 'development',
         skillDependencies: ['beta'],
         requirements: [
           { title: 'Setup', url: 'https://example.com/setup' },
@@ -202,6 +203,8 @@ describe('loadCatalog', () => {
     expect(catalog.map(skill => skill.name)).toEqual(['alpha', 'beta']);
     expect(catalog[0]).toMatchObject({
       name: 'alpha',
+      category: 'development',
+      categoryLabel: '开发工程',
       markdown: 'Alpha body',
       skillDependencies: ['beta'],
       installCommand: 'npx skills add BINGWU2003/skills --skill alpha beta',
@@ -210,7 +213,18 @@ describe('loadCatalog', () => {
     expect(catalog[0].metadata).toEqual([{ key: 'disable-model-invocation', value: true }]);
     expect(catalog[0].files.map(file => file.path)).toEqual(['README.md', 'SKILL.md']);
     expect(catalog[0].searchText).toContain('Alpha setup');
+    expect(catalog[0].searchText).toContain('开发工程');
+    expect(catalog[1]).toMatchObject({ category: 'other', categoryLabel: '未分类' });
     expect(catalog[0].updatedAt).toMatch(/^\d{4}-/);
+  });
+
+  it('rejects an unknown category with a configuration hint', async () => {
+    const fixture = await createMockFixture({
+      files: { 'skills/alpha/SKILL.md': '---\nname: alpha\ndescription: Alpha\n---\n' },
+      config: { alpha: { category: 'invalid' } },
+    });
+    await expect(loadCatalog({ repoRoot: fixture.root, runGitCommand: fixture.runGitCommand }))
+      .rejects.toThrow(/alpha.*category.*skills.config.json/);
   });
 
   it('builds upstream metadata from a checked-out or pinned submodule commit', async () => {

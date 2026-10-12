@@ -40,6 +40,7 @@ function fileIcon(kind: string): string {
         <a href={withBase()}>skills</a><span>/</span><span>{skill.name}</span>
       </nav>
       <h1>{skill.name}</h1>
+      <span class="category-label">{skill.categoryLabel}</span>
       <p class="detail-description">{skill.description}</p>
       <div class="detail-actions">
         <InstallCommand command={skill.installCommand} />

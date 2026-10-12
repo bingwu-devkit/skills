@@ -3,19 +3,28 @@
 本目录汇总仓库当前可安装的 Skill。通用安装方法见
 [`README.md`](README.md#快速开始)。
 
-| Skill                                              | 用途                                                                                  |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [`agent-git`](skills/agent-git/)                   | 使用 checkpoint、status、undo 和 squash 工作流，帮助 Agent 安全管理 Git 修改。        |
-| [`design-site-icon`](skills/design-site-icon/)     | 为网站设计手写签名式线性 SVG 图标并接入项目，覆盖动态 favicon、明暗主题和小尺寸适配。 |
-| [`drawio-skill`](skills/drawio-skill/)             | 创建 Draw.io 图表，并通过桌面版 CLI 导出 PNG、SVG、PDF 或 JPG。                       |
-| [`excalidraw-diagram`](skills/excalidraw-diagram/) | 根据自然语言创建 Excalidraw 图表，并通过渲染检查迭代优化视觉效果。                    |
+网站提供“全部、开发工程、图表可视化、视觉创作、效率与思考”分类筛选，可与搜索组合使用。
+分类在 [`skills.config.json`](skills.config.json) 中统一维护；修改后运行
+`pnpm run groups:generate` 更新安装菜单清单，维护方法见
+[`README.md`](README.md#维护-skill-分类)。
+
+| Skill | 用途 |
+| --- | --- |
+| [`agent-git`](skills/agent-git/) | 使用 checkpoint、status、undo 和 squash 工作流，帮助 Agent 安全管理 Git 修改。 |
+| [`archify`](skills/archify/) | 创建可交互浏览和导出的架构、流程、时序、数据流及状态图。 |
+| [`design-site-icon`](skills/design-site-icon/) | 为网站设计手写签名式线性 SVG 图标并接入项目，覆盖动态 favicon、明暗主题和小尺寸适配。 |
+| [`drawio-skill`](skills/drawio-skill/) | 创建 Draw.io 图表，并通过桌面版 CLI 导出 PNG、SVG、PDF 或 JPG。 |
+| [`excalidraw-diagram`](skills/excalidraw-diagram/) | 根据自然语言创建 Excalidraw 图表，并通过渲染检查迭代优化视觉效果。 |
 | [`excalidraw-diagram-generator`](skills/excalidraw-diagram-generator/) | 根据自然语言生成 Excalidraw 流程图、架构图和关系图。 |
-| [`gitlab-url-guard`](skills/gitlab-url-guard/)     | 规范化并校验 MR、流水线、作业和提交链接，保留源分支并登记流水线成功后自动合并。       |
-| [`grilling`](skills/grilling/)                     | 通过结构化的深入访谈，系统梳理计划、设计或决策中的关键问题。                          |
+| [`gitlab-release-workflow`](skills/gitlab-release-workflow/) | 编排 GitLab MR、流水线、自动合并、部署授权和发布验收。 |
+| [`gitlab-url-guard`](skills/gitlab-url-guard/) | 构造、规范化并校验 GitLab MR、流水线、作业和提交链接。 |
+| [`grilling`](skills/grilling/) | 通过结构化的深入访谈，系统梳理计划、设计或决策中的关键问题。 |
 | [`ian-xiaohei-illustrations`](skills/ian-xiaohei-illustrations/) | 为中文文章规划并生成 Ian 小黑风格的 16:9 白底手绘正文配图。 |
-| [`imgrelay`](skills/imgrelay/)                     | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。                          |
-| [`tdd`](skills/tdd/)                               | 通过红—绿循环按公共接口逐步开发，并确保测试聚焦可观察行为。                          |
-| [`weekly-git-report`](skills/weekly-git-report/)   | 根据 Git 提交记录生成、整理或保存周报。                                               |
+| [`imgrelay`](skills/imgrelay/) | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。 |
+| [`ip-as-logo`](skills/ip-as-logo/) | 创建简洁、拟人化的方形角色图标与 IP 形象候选。 |
+| [`show-me`](skills/show-me/) | 通过简洁图示、代码结构草图和 HTML 工具辅助理解。 |
+| [`tdd`](skills/tdd/) | 通过红—绿循环按公共接口逐步开发，并确保测试聚焦可观察行为。 |
+| [`weekly-git-report`](skills/weekly-git-report/) | 根据 Git 提交记录生成、整理或保存周报。 |
 
 ## 特殊安装与依赖
 

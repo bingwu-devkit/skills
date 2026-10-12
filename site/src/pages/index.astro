@@ -3,8 +3,10 @@ import InstallCommand from '../components/InstallCommand.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate, skillHref } from '../lib/paths';
 import { loadCatalog } from '../../../scripts/site-catalog.mjs';
+import { countSkillCategories } from '../../../scripts/skill-categories.mjs';
 
 const skills = await loadCatalog();
+const categories = countSkillCategories(skills);
 const latestUpdate = skills
   .map(skill => skill.updatedAt)
   .filter(Boolean)
@@ -31,7 +33,7 @@ const latestUpdate = skills
     <section class="catalog-section" aria-labelledby="catalog-title" data-catalog data-base={import.meta.env.BASE_URL}>
       <div class="catalog-header">
         <h2 class="table-heading" id="catalog-title">Skills Directory</h2>
-        <span class="catalog-count">{skills.length} SKILLS · UPDATED {formatDate(latestUpdate)}</span>
+        <span class="catalog-count"><span data-match-count aria-live="polite">{skills.length}</span> / {skills.length} SKILLS · UPDATED {formatDate(latestUpdate)}</span>
       </div>
 
       <label class="search-box">
@@ -40,6 +42,15 @@ const latestUpdate = skills
         <input type="search" placeholder="搜索名称、简介、正文或文件路径…" autocomplete="off" data-search-input />
         <span class="shortcut" aria-hidden="true">/</span>
       </label>
+
+      <div class="category-filters" role="group" aria-label="按分类筛选 Skills">
+        <button type="button" data-category-filter="all" aria-pressed="true">全部 <span>{skills.length}</span></button>
+        {categories.map(category => (
+          <button type="button" data-category-filter={category.id} aria-pressed="false">
+            {category.label} <span>{category.count}</span>
+          </button>
+        ))}
+      </div>
 
       <div class="sort-tabs" aria-label="排序方式">
         <button type="button" data-sort="name" aria-pressed="true">名称</button>
@@ -56,11 +67,14 @@ const latestUpdate = skills
         </thead>
         <tbody data-skill-rows>
           {skills.map((skill, index) => (
-            <tr class="skill-row" data-name={skill.name} data-updated={skill.updatedAt ?? ''}>
+            <tr class="skill-row" data-name={skill.name} data-category={skill.category} data-updated={skill.updatedAt ?? ''}>
               <td class="row-index">{String(index + 1).padStart(2, '0')}</td>
               <td>
                 <a class="skill-link" href={skillHref(skill.name)}>
-                  <span class="skill-name">{skill.name}</span>
+                  <span class="skill-identity">
+                    <span class="skill-name">{skill.name}</span>
+                    <span class="category-label">{skill.categoryLabel}</span>
+                  </span>
                   <span class="skill-description">{skill.description}</span>
                 </a>
               </td>
@@ -78,6 +92,8 @@ const latestUpdate = skills
   <script>
     type SearchEntry = {
       name: string;
+      category: string;
+      categoryLabel: string;
       description: string;
       updatedAt: string | null;
       source: string;
@@ -91,15 +107,22 @@ const latestUpdate = skills
     const rowsRoot = catalog?.querySelector<HTMLElement>('[data-skill-rows]');
     const resultsRoot = catalog?.querySelector<HTMLUListElement>('[data-search-results]');
     const emptyState = catalog?.querySelector<HTMLElement>('[data-empty-state]');
+    const matchCount = catalog?.querySelector<HTMLElement>('[data-match-count]');
+    const categoryButtons = [...(catalog?.querySelectorAll<HTMLButtonElement>('[data-category-filter]') ?? [])];
     const sortButtons = [...(catalog?.querySelectorAll<HTMLButtonElement>('[data-sort]') ?? [])];
     const rows = [...(rowsRoot?.querySelectorAll<HTMLTableRowElement>('[data-name]') ?? [])];
     const base = catalog?.dataset.base ?? '/';
     let indexPromise: Promise<SearchEntry[]> | null = null;
+    let selectedCategory = 'all';
+    let searchRevision = 0;
 
     function loadIndex() {
       indexPromise ??= fetch(`${base}search-index.json`).then(response => {
         if (!response.ok) throw new Error('搜索索引加载失败');
         return response.json() as Promise<SearchEntry[]>;
+      }).catch(error => {
+        indexPromise = null;
+        throw error;
       });
       return indexPromise;
     }
@@ -146,12 +169,18 @@ const latestUpdate = skills
       const summary = document.createElement('div');
       const name = document.createElement('strong');
       name.textContent = entry.name;
+      const identity = document.createElement('div');
+      identity.className = 'skill-identity';
+      const category = document.createElement('span');
+      category.className = 'category-label';
+      category.textContent = entry.categoryLabel;
+      identity.append(name, category);
       const description = document.createElement('p');
       description.textContent = entry.description;
       const snippet = document.createElement('div');
       snippet.className = 'snippet';
       snippet.textContent = excerpt(entry, terms);
-      summary.append(name, description);
+      summary.append(identity, description);
       link.append(summary, snippet);
       item.append(link);
       return item;
@@ -159,24 +188,58 @@ const latestUpdate = skills
 
     async function search() {
       if (!input || !resultsRoot || !table || !emptyState) return;
+      const revision = ++searchRevision;
+      const category = selectedCategory;
       const terms = normalized(input.value).trim().split(/\s+/).filter(Boolean);
+      for (const button of sortButtons) button.disabled = terms.length > 0;
+      resultsRoot.classList.remove('is-visible');
+      resultsRoot.replaceChildren();
+      emptyState.textContent = '没有找到匹配的 Skill。';
       if (terms.length === 0) {
+        let count = 0;
+        for (const row of rows) {
+          row.hidden = category !== 'all' && row.dataset.category !== category;
+          if (!row.hidden) count += 1;
+        }
         table.hidden = false;
-        resultsRoot.classList.remove('is-visible');
-        resultsRoot.replaceChildren();
-        emptyState.hidden = true;
+        emptyState.hidden = count > 0;
+        if (matchCount) matchCount.textContent = String(count);
         return;
       }
 
-      const searchIndex = await loadIndex();
-      const matches = searchIndex
-        .map(entry => ({ entry, score: score(entry, terms) }))
-        .filter(match => match.score >= 0)
-        .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name));
-      resultsRoot.replaceChildren(...matches.map(match => createResult(match.entry, terms)));
       table.hidden = true;
-      resultsRoot.classList.toggle('is-visible', matches.length > 0);
-      emptyState.hidden = matches.length > 0;
+      emptyState.hidden = false;
+      emptyState.textContent = '正在搜索…';
+      if (matchCount) matchCount.textContent = '…';
+      try {
+        const searchIndex = await loadIndex();
+        if (revision !== searchRevision) return;
+        const matches = searchIndex
+          .filter(entry => category === 'all' || entry.category === category)
+          .map(entry => ({ entry, score: score(entry, terms) }))
+          .filter(match => match.score >= 0)
+          .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name));
+        resultsRoot.replaceChildren(...matches.map(match => createResult(match.entry, terms)));
+        resultsRoot.classList.toggle('is-visible', matches.length > 0);
+        emptyState.textContent = '没有找到匹配的 Skill。';
+        emptyState.hidden = matches.length > 0;
+        if (matchCount) matchCount.textContent = String(matches.length);
+      }
+      catch {
+        if (revision !== searchRevision) return;
+        emptyState.textContent = '搜索索引加载失败，请修改关键词重试，或清空搜索继续浏览分类。';
+        if (matchCount) matchCount.textContent = '—';
+      }
+    }
+
+    for (const button of categoryButtons) {
+      button.addEventListener('click', () => {
+        selectedCategory = button.dataset.categoryFilter ?? 'all';
+        for (const candidate of categoryButtons) {
+          candidate.setAttribute('aria-pressed', String(candidate === button));
+        }
+        void search();
+      });
     }
 
     input?.addEventListener('input', () => void search());

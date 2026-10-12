@@ -53,7 +53,8 @@ pnpm run sources:init
 ├── sources/               # 通过 Git submodule 引用的 Skill 来源
 ├── scripts/               # 仓库维护脚本
 ├── site/                  # Astro 静态网站源码
-├── skills.config.json     # 外部 Skill 的来源和同步路径
+├── skills.config.json     # Skill 分类、来源、依赖与运行要求
+├── .claude-plugin/        # 从分类配置生成的 CLI 分组清单
 ├── .gitmodules            # Git submodule 配置
 └── AGENTS.md              # 仓库维护约定
 ```
@@ -93,13 +94,40 @@ pnpm run sources:add -- <repository-url> sources/<project-name>
 {
   "example-skill": {
     "submodule": "sources/example-project",
-    "skillPath": "path/to/example-skill"
+    "skillPath": "path/to/example-skill",
+    "category": "development"
   }
 }
 ```
 
 不要直接修改由外部来源同步生成的 `skills/<skill-name>/`；同步时保持上游目录和
 frontmatter 原样。改动应先在来源项目中完成，再同步到本仓库。
+
+### 维护 Skill 分类
+
+分类只在 `skills.config.json` 的对应 Skill 条目中维护，使用可选的 `category`
+字段。仓库内维护的 Skill 也可以只登记分类。
+
+| category | 网站名称 |
+| --- | --- |
+| `development` | 开发工程 |
+| `diagramming` | 图表可视化 |
+| `visual-design` | 视觉创作 |
+| `productivity` | 效率与思考 |
+| `other` 或未配置 | 未分类 |
+
+分类 ID 和显示名统一定义在 `scripts/skill-categories.mjs`。添加、删除 Skill
+或调整分类后，生成并提交 CLI 分组清单：
+
+```bash
+pnpm run groups:generate
+pnpm run check
+```
+
+`.claude-plugin/marketplace.json` 是生成文件，请勿手动维护。
+`skills` CLI 读取它显示安装分组，仍可安装到 Codex 等支持的 Agent；网站直接读取
+分类配置，提供“全部”和各分类按钮，可与关键词搜索组合使用。
+无需修改上游 Skill 的 frontmatter 或调整发布目录结构。
 
 ## 更新外部 Skills
 
@@ -127,10 +155,13 @@ pnpm run update -- <skill-name>
 pnpm run check
 ```
 
-该命令只检查 Skill 发现结果，不会修改文件。也可以使用以下命令单独查看结果：
+该命令校验分组清单、检查 Skill 发现结果并运行测试，不会修改仓库文件。
+清单缺失或过期时会提示运行 `pnpm run groups:generate`。
+也可以使用以下命令单独查看结果：
 
 ```bash
 pnpm run skills:list
+pnpm run groups:check
 ```
 
 ## 网站开发

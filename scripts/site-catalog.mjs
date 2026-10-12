@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 import matter from 'gray-matter';
 
+import { getSkillCategory } from './skill-categories.mjs';
+
 export function findRepositoryRoot(cwd = process.cwd(), modulePath = fileURLToPath(import.meta.url)) {
   const candidates = [
     cwd,
@@ -242,6 +244,8 @@ export async function loadCatalog(options = {}) {
     }
 
     const skillConfig = config[skillName] ?? {};
+    const category = getSkillCategory(skillName, skillConfig);
+    searchableParts.push(category.id, category.label);
     const skillDependencies = skillConfig.skillDependencies ?? [];
     for (const dependency of skillDependencies) {
       const dependencyEntries = filesBySkill.get(dependency);
@@ -286,6 +290,8 @@ export async function loadCatalog(options = {}) {
     const updatedAt = runGitCommand(['log', '-1', '--format=%cI', '--', `skills/${skillName}`], { allowFailure: true }) || null;
     skills.push({
       name: skillName,
+      category: category.id,
+      categoryLabel: category.label,
       description: parsed.data.description.trim(),
       frontmatter: parsed.data,
       metadata: simpleMetadata(parsed.data),

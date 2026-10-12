@@ -44,6 +44,8 @@ export async function createSkillZip(skill, destinationPath, options = {}) {
 export function buildSearchIndexEntry(skill) {
   return {
     name: skill.name,
+    category: skill.category,
+    categoryLabel: skill.categoryLabel,
     description: skill.description,
     updatedAt: skill.updatedAt,
     source: skill.upstream?.repositoryUrl ?? skill.publishedSourceUrl,

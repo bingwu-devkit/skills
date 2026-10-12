@@ -36,6 +36,8 @@ describe('build-site-assets', () => {
   it('builds search entries with upstream and published fallbacks', () => {
     const base = {
       name: 'alpha',
+      category: 'development',
+      categoryLabel: '开发工程',
       description: 'Alpha',
       updatedAt: null,
       publishedSourceUrl: 'https://example.com/published',
@@ -46,6 +48,8 @@ describe('build-site-assets', () => {
       .toBe('https://example.com/upstream');
     expect(buildSearchIndexEntry({ ...base, upstream: null })).toEqual({
       name: 'alpha',
+      category: 'development',
+      categoryLabel: '开发工程',
       description: 'Alpha',
       updatedAt: null,
       source: 'https://example.com/published',
@@ -94,6 +98,8 @@ describe('build-site-assets', () => {
     const logger = { log: vi.fn() };
     const skill = {
       name: 'alpha',
+      category: 'diagramming',
+      categoryLabel: '图表可视化',
       description: 'Alpha',
       updatedAt: '2026-01-01T00:00:00Z',
       upstream: null,

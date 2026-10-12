@@ -1,5 +1,6 @@
 {
   "agent-git": {
+    "category": "development",
     "submodule": "sources/agent-git",
     "skillPath": "packages/skill/skills/agent-git",
     "requirements": [
@@ -21,6 +22,7 @@
     ]
   },
   "design-site-icon": {
+    "category": "visual-design",
     "requirements": [
       {
         "title": "Python 3",
@@ -30,6 +32,7 @@
     ]
   },
   "drawio-skill": {
+    "category": "diagramming",
     "submodule": "sources/drawio-skill",
     "skillPath": "skills/drawio-skill",
     "requirements": [
@@ -51,6 +54,7 @@
     ]
   },
   "excalidraw-diagram": {
+    "category": "diagramming",
     "submodule": "sources/excalidraw-diagram-skill",
     "skillPath": ".",
     "requirements": [
@@ -77,10 +81,12 @@
     ]
   },
   "excalidraw-diagram-generator": {
+    "category": "diagramming",
     "submodule": "sources/awesome-copilot",
     "skillPath": "skills/excalidraw-diagram-generator"
   },
   "gitlab-release-workflow": {
+    "category": "development",
     "skillDependencies": [
       "gitlab-url-guard"
     ],
@@ -108,6 +114,7 @@
     ]
   },
   "gitlab-url-guard": {
+    "category": "development",
     "requirements": [
       {
         "title": "Git",
@@ -127,18 +134,22 @@
     ]
   },
   "grilling": {
+    "category": "productivity",
     "submodule": "sources/mattpocock-skills",
     "skillPath": "skills/productivity/grilling"
   },
   "tdd": {
+    "category": "development",
     "submodule": "sources/mattpocock-skills",
     "skillPath": "skills/engineering/tdd"
   },
   "ip-as-logo": {
+    "category": "visual-design",
     "submodule": "sources/ip-as-logo-skill",
     "skillPath": "."
   },
   "weekly-git-report": {
+    "category": "productivity",
     "submodule": "sources/weekly-git-report",
     "skillPath": "skills/weekly-git-report",
     "requirements": [
@@ -160,6 +171,7 @@
     ]
   },
   "archify": {
+    "category": "diagramming",
     "submodule": "sources/archify",
     "skillPath": "archify",
     "requirements": [
@@ -176,10 +188,12 @@
     ]
   },
   "show-me": {
+    "category": "diagramming",
     "submodule": "sources/humanlayer-skills",
     "skillPath": "plugins/show-me/skills/show-me"
   },
   "imgrelay": {
+    "category": "visual-design",
     "submodule": "sources/imgrelay",
     "skillPath": "skills/imgrelay",
     "requirements": [
@@ -201,6 +215,7 @@
     ]
   },
   "ian-xiaohei-illustrations": {
+    "category": "visual-design",
     "submodule": "sources/ian-xiaohei-illustrations",
     "skillPath": "ian-xiaohei-illustrations",
     "requirements": [

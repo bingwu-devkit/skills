@@ -1,0 +1,55 @@
+{
+  "name": "bingwu-skills",
+  "owner": {
+    "name": "BINGWU2003"
+  },
+  "plugins": [
+    {
+      "name": "development",
+      "description": "开发工程",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-git",
+        "./skills/gitlab-release-workflow",
+        "./skills/gitlab-url-guard",
+        "./skills/tdd"
+      ]
+    },
+    {
+      "name": "diagramming",
+      "description": "图表可视化",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/archify",
+        "./skills/drawio-skill",
+        "./skills/excalidraw-diagram",
+        "./skills/excalidraw-diagram-generator",
+        "./skills/show-me"
+      ]
+    },
+    {
+      "name": "visual-design",
+      "description": "视觉创作",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/design-site-icon",
+        "./skills/ian-xiaohei-illustrations",
+        "./skills/imgrelay",
+        "./skills/ip-as-logo"
+      ]
+    },
+    {
+      "name": "productivity",
+      "description": "效率与思考",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/grilling",
+        "./skills/weekly-git-report"
+      ]
+    }
+  ]
+}
