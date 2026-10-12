@@ -74,17 +74,18 @@ export function buildSubmoduleArgs(repoRoot, submodule) {
 }
 
 export function parseArgs(args, config) {
+  const commandArgs = args[0] === "--" ? args.slice(1) : args;
   const allowedOptions = new Set(["--help", "-h"]);
-  const unknownOption = args.find(
+  const unknownOption = commandArgs.find(
     (arg) => arg.startsWith("-") && !allowedOptions.has(arg),
   );
   if (unknownOption) {
     throw new Error(`不支持的参数：${unknownOption}`);
   }
 
-  const help = args.includes("--help") || args.includes("-h");
+  const help = commandArgs.includes("--help") || commandArgs.includes("-h");
   const requestedNames = [
-    ...new Set(args.filter((arg) => !arg.startsWith("-"))),
+    ...new Set(commandArgs.filter((arg) => !arg.startsWith("-"))),
   ];
   const skillNames =
     requestedNames.length > 0 ? requestedNames : Object.keys(config);

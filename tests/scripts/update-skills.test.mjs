@@ -221,6 +221,19 @@ describe("update-skills", () => {
     expect(update).toHaveBeenCalledTimes(1);
   });
 
+  it("updates only the selected skill with pnpm's forwarded argument separator", async () => {
+    const config = {
+      alpha: { submodule: "sources/a" },
+      beta: { submodule: "sources/b" },
+    };
+    const update = vi.fn();
+
+    await main(["--", "beta"], { config, update, logger: { log: vi.fn() } });
+
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledWith("beta", config.beta);
+  });
+
   it("reads configuration and uses the default update adapter", async () => {
     const readTextFile = vi
       .fn()

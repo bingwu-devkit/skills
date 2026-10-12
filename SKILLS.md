@@ -22,6 +22,7 @@
 | [`ian-xiaohei-illustrations`](skills/ian-xiaohei-illustrations/) | 为中文文章规划并生成 Ian 小黑风格的 16:9 白底手绘正文配图。 |
 | [`imgrelay`](skills/imgrelay/) | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。 |
 | [`ip-as-logo`](skills/ip-as-logo/) | 创建简洁、拟人化的方形角色图标与 IP 形象候选。 |
+| [`pr`](skills/pr/) | 编写包含可视化摘要、验证证据和合并风险说明的 PR 描述。 |
 | [`show-me`](skills/show-me/) | 通过简洁图示、代码结构草图和 HTML 工具辅助理解。 |
 | [`tdd`](skills/tdd/) | 通过红—绿循环按公共接口逐步开发，并确保测试聚焦可观察行为。 |
 | [`weekly-git-report`](skills/weekly-git-report/) | 根据 Git 提交记录生成、整理或保存周报。 |
