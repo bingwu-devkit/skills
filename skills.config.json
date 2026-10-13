@@ -88,6 +88,7 @@
   "gitlab-release-workflow": {
     "category": "repository-workflow",
     "skillDependencies": [
+      "pr",
       "gitlab-url-guard"
     ],
     "requirements": [
@@ -98,18 +99,18 @@
       },
       {
         "title": "glab CLI",
-        "description": "创建、更新、查询、评论及合并 GitLab MR，以及读取流水线和 Job 状态时需要已完成认证的 glab。",
+        "description": "创建、更新和查询 GitLab MR、登记或取消自动合并、读取流水线和 Job 状态及触发已授权的生产部署时，需要已完成认证的 glab。",
         "url": "https://gitlab.com/gitlab-org/cli"
       },
       {
-        "title": "glab Skill（推荐）",
-        "description": "为 MR、流水线、Job 和合并操作提供 GitLab 工作流约束；缺失时可使用已认证的 glab CLI 完成对应步骤。",
+        "title": "glab Skill",
+        "description": "为 MR、流水线、自动合并和已授权部署操作提供 GitLab 工作流约束，执行对应阶段前需要可用。",
         "url": "https://gitlab.com/gitlab-org/ai/skills/-/tree/main/skills/glab"
       },
       {
-        "title": "gitlab-mr-description Skill（推荐）",
-        "description": "创建或更新 MR 前根据分支差异生成结构化描述；缺失时可自行准备描述文件。",
-        "url": "https://gitlab.com/gitlab-org/ai/skills/-/tree/main/skills/gitlab-mr-description"
+        "title": "pr Skill",
+        "description": "创建或更新 MR 前，根据实际差异与验证证据，使用 Summary、Evidence、Merge Danger 结构编写中文描述；随本 Skill 一起安装。",
+        "url": "https://github.com/BINGWU2003/skills/tree/main/skills/pr"
       }
     ]
   },

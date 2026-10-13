@@ -1,141 +1,146 @@
 ---
 name: gitlab-release-workflow
-description: 编排 GitLab MR 创建或更新、描述校验、源分支保留、detached MR 流水线确认、流水线成功后自动合并、有限状态等待、手动部署授权和发布验收。用户要求提交或合并 MR、等待流水线、发布到环境、检查部署结果或生成发布交付证据时使用；通过 glab 操作 GitLab，并使用 gitlab-url-guard 构造和校验所有交付链接。
+description: 按测试或生产环境编排 GitLab MR 创建、流水线成功后自动合并及显式授权的生产部署。用户要求提交 PR/MR 到测试或生产、把测试环境合并到生产环境（test 晋级 main/master）、部署或检查流程状态时使用；异常默认停止并交还用户，使用 pr 编写描述、glab 操作 GitLab、gitlab-url-guard 校验链接。
 ---
 
 # GitLab 发布工作流
 
-编排从 MR 创建或更新到流水线、合并、部署验收和最终交付的完整流程。将 MR 合并与环境部署视为两个独立动作，并使用 `gitlab-url-guard` 处理所有 GitLab URL。
+用户所说的 PR 在 GitLab 中对应 MR。将合并与手动部署分开授权；测试环境合并后由 CI 自动部署，生产环境只有用户明确要求部署时才触发手动作业。异常默认停止，不自行修复后继续合并。
 
-## 依赖与协作能力
+## 意图与完成边界
 
-### 核心运行依赖
+| 用户请求                                                 | 合并目标                    | 合并行为                                | 部署行为与默认结束点                                     |
+| -------------------------------------------------------- | --------------------------- | --------------------------------------- | -------------------------------------------------------- |
+| 提交 PR 到测试环境                                       | `test`                      | 仅创建或更新 MR                         | 不开启自动合并                                           |
+| 提交 PR 到测试环境并合并                                 | `test`                      | 开启流水线成功后自动合并                | 登记并验证后结束；合并后的分支流水线自动部署测试环境     |
+| 提交 PR 到生产环境                                       | 已确认的 `main` 或 `master` | 仅创建或更新 MR                         | 不开启自动合并，不触发部署                               |
+| 提交 PR 到生产环境并合并                                 | 已确认的 `main` 或 `master` | 开启流水线成功后自动合并                | 登记并验证后结束；生产手动部署保持未触发                 |
+| 提交 PR 到生产环境并部署                                 | 已确认的 `main` 或 `master` | 包含合并授权                            | 登记自动合并后继续有限等待，构建就绪后触发生产部署并验收 |
+| 把测试环境合并到生产环境 / 把 test 合并到 main 或 master | `test` → 已确认的生产分支   | 创建或复用 MR，开启流水线成功后自动合并 | 登记并验证后结束，不触发生产部署                         |
+| 把测试环境合并到生产环境并部署                           | `test` → 已确认的生产分支   | 创建或复用 MR，开启流水线成功后自动合并 | 继续有限等待，构建就绪后触发生产部署并验收               |
+| 从测试环境向生产环境提 PR，先不要合并                    | `test` → 已确认的生产分支   | 仅创建或更新 MR                         | 不开启自动合并，不触发部署                               |
 
-- 使用 `git` 检查仓库、分支、提交和差异。
-- 使用已完成认证的 `glab` CLI 创建、更新、查询、评论及合并 MR，并读取流水线和 Job 状态；先执行 `glab auth status`。
-- 使用 `gitlab-url-guard` 规范化、构造和校验所有 GitLab 链接。
+- 明确要求“等待合并完成”时等待 MR 合并；要求测试部署完成时继续等待测试部署作业，但不手动替代其自动部署。
+- “并部署”已经授权对应环境的部署，不重复询问。仅“并合并”不授权手动部署。
+- 用户明确要求“先不要合并”或撤回合并授权时，优先回读已有 MR；若 Auto-merge 已开启，先调用取消自动合并接口并确认关闭，再继续仅维护 MR。取消失败或已发生合并时停止并报告实际状态，不声称已阻止合并。
+- 未指定环境时，从用户上下文或已有 MR 确定；仍有歧义才询问，不默认选择生产。
+- 仅要求“并合并”时，开启自动合并、回读确认并列出本次 MR 关联的流水线后结束，不等待所有关联流水线成功。结束时按实际状态报告“尚未开启自动合并”“已开启自动合并，尚未合并”或“MR 已合并”；合并成功不代表部署已完成。
 
-缺少 `glab` 时，不得声称已完成 GitLab 写入、状态查询、合并或部署操作。缺少 `gitlab-url-guard` 或其项目配置时，先完成初始化和校验，不得跳过 URL 校验。
+### 测试晋级生产的源分支与范围
 
-### 推荐搭配的 Skill
+“把测试环境合并到生产环境”“test 合到生产”等表达明确指定了合并方向：源分支为远端 `test`，目标为按项目配置确认的 `main` 或 `master`，与本地当前检出的分支无关。“合并到”本身即授权创建或复用 MR 并合并，不要求用户额外说“提交 PR”；是否部署仍单独依据用户措辞判断，明确“不部署”时不触发部署。只有泛指“提交 PR 到生产”而未指定测试来源时，不自动改用 `test`。
 
-仅在当前环境可用且任务涉及对应阶段时加载；不得自动安装缺失的 Skill，除非用户明确要求。
+- 获取远端最新引用，以远端生产分支与远端 `test` 的实际差异生成 MR 描述，涵盖所有尚未进入生产的变更，不只描述当前功能分支或最近一个提交。
+- 创建或查找 MR 时显式指定 `source_branch=test` 和已确认的生产目标；不从当前功能分支误建 MR，不先在本地 merge 后直接推送生产分支，也不创建替代晋级分支。
+- 此请求只晋级远端 `test` 已有的变更，不顺带提交或推送本地未提交、未推送的代码，不将本地改动混入晋级范围。`test` 默认保留。
+- 晋级创建 MR 时，不使用 `--push` 或会隐含推送的 `--fill`；这是对 `glab` Skill“创建 MR 始终带 --push”的场景例外，以本流程的远端来源约束为准。显式设置 `--source-branch test`、生产 `--target-branch`、来源项目 `-H` 与目标项目 `-R`，或通过 API 指定同等源/目标信息；无需先切换本地分支。
+- 测试环境流水线或测试部署成功不能替代面向生产目标的 MR 合并检查。沿用本 Skill 的 SHA 绑定、自动合并、异常停止及部署授权规则，不另建一套合并流程。
+- 若生产已包含 `test` 的全部变更，报告无需合并，不创建空 MR。用户同时要求部署时，先固定已确认的生产发布 SHA；不存在本次 MR 时，直接以该 SHA、生产 ref 和制品来源定位流水线及部署 Job，进入部署检查，不等待不存在的 MR。版本或制品来源不明确则报告，不用最新任意流水线代替。
 
-| Skill                   | 使用阶段              | 职责边界                                               |
-| ----------------------- | --------------------- | ------------------------------------------------------ |
-| `glab`                  | 所有 GitLab 操作      | 创建、更新、查询、评论及合并 MR；读取流水线和 Job 状态 |
-| `gitlab-mr-description` | 创建或更新 MR 前      | 根据分支差异生成结构化描述                             |
-| `gitlab-url-guard`      | MR 写入前后及最终交付 | 校验 GitLab URL，并从资源 ID 构造规范链接              |
+## 依赖与项目发现
 
-缺少推荐 Skill 时，使用可用 CLI 完成对应步骤，但不得跳过 `gitlab-url-guard` 的 URL 校验。
+只加载当前阶段需要的 Skill：
 
-## 能力探测
+| Skill / 工具       | 职责                                                           |
+| ------------------ | -------------------------------------------------------------- |
+| `git`              | 检查工作区、分支、提交与差异                                   |
+| `pr`               | 根据实际差异与验证证据编写 MR 描述，不负责 GitLab 操作         |
+| `glab`             | 通过已认证 CLI 创建、更新、查询 MR，登记自动合并及触发授权部署 |
+| `gitlab-url-guard` | 规范化、校验 GitLab 文本中的链接，并从资源 ID 构造交付链接     |
 
-开始工作前：
+1. 读取仓库 `AGENTS.md`，检查工作区、当前分支和 remote，执行 `glab auth status`。
+2. 读取 `.gitlab-ci.yml` 及相关 include，结合远端分支、项目默认分支和部署作业确认环境映射。本项目为 `test` → 测试、`main` → 生产；其他项目可能使用 `master`，不得仅凭分支名猜测。当 `main` 与 `master` 并存且映射不明时先询问。
+3. 确认 MR 合并检查、关联流水线及合并后目标分支流水线和各环境部署策略。本项目 CI 会创建 detached MR 流水线，但 MR 关联流水线列表不限于 detached。配置与用户预期不符时报告，不在发布任务中擅自改 CI。
+4. 确认 `gitlab-url-guard.json` 的 `projectUrl` 正确；缺少时按 `gitlab-url-guard` 初始化和校验。
+5. 提交未提交改动时仅包含本次任务文件，遵守仓库中文提交及分支规则；不得直接向 `test`、`main`、`master` 推送变更来绕过 MR。已有源分支（包括明确用于生产晋级的 `test`）可直接作为 MR 来源，不强制重建分支。
 
-1. 检查当前可用 Skill，仅加载与当前阶段有关的协作 Skill。
-2. 执行 `glab auth status`。
-3. 使用 `git remote -v` 确认目标项目和 GitLab 实例。
-4. 确认 `gitlab-url-guard.json` 存在且其中的 `projectUrl` 正确。
-5. 不使用 GitLab API 返回的 `web_url` 作为最终交付链接。
-
-## URL 校验契约
-
-所有 MR 描述、评论、发布说明和最终交付文本必须使用 `gitlab-url-guard` 规范化并校验：
-
-1. GitLab 写入前执行 `normalize` 和 `validate`。
-2. `validate` 返回非零状态时停止写入、评论、合并和发布通知。
-3. GitLab 写入后回读实际内容，保存到仓库外临时文件并再次执行 `validate`。
-4. 最终 MR、流水线、Job 和提交链接只使用资源 ID 调用 `gitlab-url-guard` 构造。
+缺少工具、认证或必要 Skill 时报告受阻阶段，不自动安装依赖，不声称外部操作已完成。
 
 ## 创建或更新 MR
 
-1. 使用 `git` 检查目标分支、提交和差异。
-2. 如果可用，使用 `gitlab-mr-description` 生成描述文件。
-3. 使用 `gitlab-url-guard` 规范化并严格校验描述文件。
-4. 校验通过后，按照 `glab` Skill 的约束执行 `glab mr create` 或 `glab mr update`；创建 MR 时显式传入 `--remove-source-branch=false`。
-5. 使用 `glab mr view <iid> -F json` 回读实际描述。
-6. 将实际描述保存到仓库外临时文件，并使用 `gitlab-url-guard` 再次执行严格校验。
-7. 使用资源 IID 调用 `gitlab-url-guard` 的 `url mr <iid>` 生成最终 MR 链接。
+1. 确认源分支、目标分支、提交范围及差异，推送已授权的任务提交。查找相同源分支和目标分支的未合并 MR，优先复用，避免重复创建。
+2. 使用 `pr` 编写描述：采用其 `Summary`、`Evidence`、`Merge Danger` 结构，正文使用中文，选择最小且有用的图示或差异草图。按需读取已有 `GLOSSARY.md`；没有则使用项目用语，不为此创建文件。证据必须真实，未运行或缺少 Before 证据时如实说明，不编造测试结果。
+3. 将描述保存到仓库外临时文件，使用 `gitlab-url-guard` 执行 `normalize` 和严格 `validate`，通过后用 `glab` 创建或更新 MR。通过文件或结构化参数提交多行正文，避免 shell 转义破坏内容。
+4. 创建 MR 时显式设置 `--remove-source-branch=false`；更新已有 MR 时显式关闭删除源分支选项。
+5. 回读实际描述，再保存到仓库外临时文件并执行严格 `validate`。校验失败时停止后续合并。
 
-## 保留源分支
+所有 MR 描述、评论、发布说明和最终交付文本都遵守 URL 校验契约：写入前规范化并校验，写入后回读校验；交付链接只通过 `gitlab-url-guard` 从 MR IID、流水线 ID、Job ID 或提交 SHA 构造，不直接使用 API 的 `web_url`。不得因本流程自动给他人发送评论或通知。
 
-MR 合并后默认保留源分支，除非用户明确要求删除：
+## 合并门禁与源分支保留
 
-1. 创建 MR 时使用 `--remove-source-branch=false`，不要依赖项目默认值。
-2. 对已有 MR，在登记 Auto-merge 前显式关闭删除选项：
+登记自动合并或立即合并前，回读并确认：
 
-   ```powershell
-   glab api --method PUT `
-     'projects/<url-encoded-project>/merge_requests/<iid>' `
-     -f 'remove_source_branch=false'
-   ```
+- MR 为 opened，源与目标符合任务，非 Draft/WIP，无冲突、未满足的审批或其他阻塞。异步计算中的 merge status 允许短暂等待，不把 pending/running 流水线本身视为异常。
+- `should_remove_source_branch` 和 `force_remove_source_branch` 均不是 `true`。项目强制删除源分支且用户未授权删除时停止；合并调用不传 `--remove-source-branch`。
+- 固定当前源分支 `head-sha`，结合 MR 详情中的 `head_pipeline`、流水线详情及服务端合并状态，确认 GitLab 实际用于本次合并检查的流水线；不能用其他流水线的成功记录替代。普通 MR 流水线核对源 SHA；merged-results 等形态需核实其与当前源、目标提交的对应关系，不能仅因合成 SHA 不同判为异常。
+- `test`、`main`、`master` 的 MR 均执行服务端合并门禁；不额外规定所有关联流水线必须成功，也不把 detached 标签作为唯一识别依据。
 
-3. 回读 MR，确认 `should_remove_source_branch` 和 `force_remove_source_branch` 都不是 `true`。
-4. 执行 `glab mr merge` 时不传 `--remove-source-branch`。
-5. 若项目策略导致 `force_remove_source_branch=true`，停止登记 Auto-merge 并报告策略冲突；不得声称源分支会被保留。
+刚创建 MR 时可每 10 秒查询一次流水线挂载与合并状态，最多 60 秒。超时仍无法确认服务端用于合并检查的流水线、状态不明或提交对应关系不符时停止，不自行绕过门禁或补建替代流水线。
+
+### 查询本次 MR 关联的流水线
+
+此步骤用于登记自动合并后的状态展示，不增加合并门禁。
+
+- 分页查询 `GET projects/<project>/merge_requests/<iid>/pipelines`，按 ID 去重；按需读取流水线详情以补全 source、ref、SHA 和状态。保留 API 返回的不同流水线类型，不只筛选 detached，也不只展示 `head_pipeline` 或最大 ID。
+- 默认列出对应本次源提交的关联流水线；API 返回旧提交记录时明确标为历史记录，不混淆为本次提交。相同 SHA 的多条流水线分别列出，不自行合并成一条或推断替代关系。
+- 若当前 GitLab 版本的 MR 接口未返回页面中的分支流水线，可按源项目、源分支 ref 和源 SHA 补查，并标注“同源提交的分支流水线”；不能仅凭相同 SHA 就声称 API 已确认其 MR 关联。无须递归枚举所有下游，除非用户要求或部署定位需要。
+- 每条展示 ID、类型或 source、ref、短 SHA、当前状态和规范链接；可确认时标注哪条用于服务端合并检查，无法识别的类型如实标为未知，不根据阶段数量猜测。
+- 列表是查询时的状态快照，不代表这些流水线均为自动合并的等待条件。查询不完整时说明缺失范围；单纯的列表查询失败不撤销已确认登记的自动合并。
+
+`merge_when_pipeline_succeeds=true` 的等待条件由 GitLab 决定，不能表述为“等待列表中的全部流水线成功”。[GitLab 13.10 官方说明](https://github.com/gitlabhq/gitlabhq/blob/v13.10.0/doc/user/project/merge_requests/merge_when_pipeline_succeeds.md#limitations)指出，同时触发分支流水线和 MR 流水线时，只检查 MR 流水线。
 
 ## 登记自动合并
 
-用户要求“提交 MR 并合并”或“流水线通过后合并”时，默认把等待委托给 GitLab Auto-merge，不由 Agent 持续轮询：
+先回读 MR。若同一 SHA 的 Auto-merge 已开启且上述门禁满足，复用现有登记，直接核验并展示关联流水线，不重复发送合并请求；需要等待或部署时继续对应流程。若 MR 已合并，核对本次提交与实际合并结果后按授权继续，不重新登记。SHA 或授权范围不一致时按异常处理。
 
-1. 回读 MR，确认源分支、目标分支、当前 `head-sha` 和 detached MR 流水线 SHA 一致。
-   - 目标分支为 `test` 或 `main` 时都必须先创建 detached MR 流水线，不得跳过 `main` 的合并前检查。
-   - MR 刚创建且 `head_pipeline` 尚未出现时，只为等待流水线挂载做短轮询：每 10 秒回读一次，最多 60 秒。
-   - 该短轮询只确认流水线存在，不等待流水线执行完成。
-   - 超时后仍无 detached 流水线，或流水线 SHA 与 MR SHA 不一致时，停止登记 Auto-merge 并报告当前状态。
-2. 根据 detached MR 流水线状态执行：
-   - `created`、`preparing`、`pending`、`running` 或 `waiting_for_resource`：使用 Merge API 显式设置“流水线成功后合并”。当前项目的 GitLab 13.10 使用 `merge_when_pipeline_succeeds=true`：
+用户授权合并且上述门禁满足后，根据 GitLab 实际用于合并检查的流水线状态处理。其他关联流水线的状态用于展示，不作为额外的登记、取消或立即合并条件：
 
-     ```powershell
-     glab api --method PUT `
-       'projects/<url-encoded-project>/merge_requests/<iid>/merge' `
-       -f 'merge_when_pipeline_succeeds=true' `
-       -f 'sha=<head-sha>'
-     ```
+- `created`、`preparing`、`pending`、`running`、`waiting_for_resource`：通过 Merge API 显式设置 `merge_when_pipeline_succeeds=true` 并绑定 `sha`。本项目 GitLab 13.10 使用此参数：
 
-   - `success`：流水线已经完成，可以使用 `glab mr merge <iid> -R <project> --auto-merge=false --sha <head-sha> --yes` 立即合并。
-   - `failed`、`canceled`、`skipped`、`manual` 或 `blocked`：停止，不登记自动合并，也不直接合并。
+  ```powershell
+  glab api --method PUT `
+    'projects/<url-encoded-project>/merge_requests/<iid>/merge' `
+    -f 'merge_when_pipeline_succeeds=true' `
+    -f 'sha=<head-sha>'
+  ```
 
-   流水线未成功时，不使用 `glab mr merge --auto-merge`。不同 GitLab 与 `glab` 版本对该参数的兼容行为不同，可能在项目未启用强制流水线门禁时直接合并 MR。
+- `success`：确认服务端合并门禁通过后，可使用 `glab mr merge <iid> -R <project> --auto-merge=false --sha <head-sha> --yes` 立即合并，再回读确认。
+- `failed`、`canceled`、`skipped`、`manual`、`blocked` 或未知状态：停止，不登记、不合并。
 
-3. 再回读 MR 和 detached 流水线，确认源分支不会被删除、MR SHA 仍等于登记时的 `head-sha`，并按调用前状态验收：
-   - 调用前流水线正在运行：MR 保持 `opened` 且 `merge_when_pipeline_succeeds=true`，才视为登记成功。
-   - 若登记调用期间流水线恰好成功并触发合并：只有同 SHA detached 流水线已为 `success`，才视为成功。
-   - MR 已合并但同 SHA detached 流水线仍未成功：判定流程违规并报告，不得声称 Auto-merge 登记成功。
-   - 调用前流水线已经成功：MR 状态为 `merged` 才视为合并成功。
-4. 使用 `gitlab-url-guard` 构造 MR 和流水线链接：等待中的 MR 报告“已开启流水线成功后自动合并”；流水线已成功并完成合并时报告“流水线已成功，MR 已合并”。然后结束当前 Agent 任务。
+流水线未成功时，不使用兼容行为不明的 `glab mr merge --auto-merge`，也不在 Auto-merge 不可用时自动降级为直接合并。其他 GitLab 版本若需等价参数，先核实服务端和 CLI 支持及其等待成功的语义；无法确认则停止。
 
-登记 Auto-merge 后不要启动额外的持续监控。GitLab 负责等待 detached MR 流水线；流水线失败时不会合并。登记后的新提交会改变 MR SHA，必须重新回读并以新 SHA 重新确认合并策略，不得沿用旧的登记结果。
+调用后回读 MR 与服务端用于合并检查的流水线，并查询本次 MR 关联的流水线列表：
 
-仅在以下情况进入同步等待流程：
+- MR 仍为 opened、SHA 未改变且 `merge_when_pipeline_succeeds=true`（或已核实的等价服务端字段）才算登记成功。
+- 若调用期间已合并，核对登记 SHA、实际合并结果及服务端合并检查的流水线结果后报告实际状态；不因其他关联流水线仍在运行而否认 MR 已合并。
+- 再次确认源分支删除选项符合授权。状态不一致、SHA 变化或合并早于校验成功时按异常处理。
 
-- 用户明确要求“等到合并完成”“同步等待”或同等语义；
-- GitLab 项目或当前 MR 无法启用 Auto-merge；
-- 用户要求流水线失败后立即诊断。
+仅要求“并合并”时，登记并验证、展示关联流水线后结束，由 GitLab 按其合并检查完成自动合并；不为了让列表全绿而持续等待，明确说明后续失败不会自动修复。用户要求等待合并、部署或失败后立即诊断时，进入下面的有限等待流程。
 
-## 按需同步等待
+## 有限等待与部署
 
-用户明确要求同步等待时，仅使用 `glab mr view` 或 `glab api` 做有限状态查询：每 20 秒查询一次，最多 30 分钟。
+需要继续执行已授权的后续动作时，使用 `glab` 每 20 秒查询一次，整个等待阶段最多 30 分钟。不要额外加载持续监控 Skill，不因阶段切换无限重置时限。
 
-- `success`：使用 `glab mr merge --sha <head-sha>` 合并，再验证目标分支包含该提交。
-- `failed`：停止等待并查询失败 Job；只有用户要求修复时才进入诊断和修改流程。
-- `manual`、`skipped` 或 `blocked`：报告人工操作状态和规范链接后结束。
-- 存在冲突：停止等待并处理或报告冲突。
-- 超时或状态未知：复核一次 MR、流水线和 Job 状态后结束。
+1. MR 仍为 opened 时，每轮比对远端源分支 head、MR 当前 SHA 与登记 SHA，检查服务端合并门禁并刷新关联流水线状态；SHA 变化即按异常处理，不用新 SHA 的流水线替代。检测到 merged 后核对原 SHA、服务端合并检查结果及实际合并结果，不再要求 MR 为 opened。成功流水线不等于 MR 已合并；已登记 Auto-merge 后等待 GitLab 完成合并，不重复发送合并请求。仅要求等待合并完成时，核实合并结果后即结束，不额外等待其他关联流水线。
+2. 需要部署或部署验收时，用 MR 的 merge/squash commit 和实际合并结果定位目标分支上的对应流水线，核对 ref 与 SHA。不能直接采用该分支“最新流水线”，也不能把 detached 流水线当作部署流水线。对应流水线尚未出现时，在剩余总等待时限内继续查询；已证实配置不会创建该流水线时立即按异常处理。
+3. 查询该流水线全部相关 Job（处理分页；若包含重试记录，只以当前有效尝试为准），分别检查校验、构建与部署状态。
+4. 根据环境与授权继续：
+   - 测试：由 CI 自动运行部署作业；要求部署验收时等待其结果，不手动重跑。意外出现 manual 部署时报告配置差异。
+   - 生产，仅授权合并：不触发任何部署作业。遇到预期的手动部署门禁时可报告“已合并，待手动部署”。
+   - 生产，明确授权部署：校验、生产构建和部署前置作业均已成功，且对应生产部署作业为 manual 时，核对 Job 的环境、分支、SHA 与制品来源。触发前再次检查生产目标分支与环境部署记录；若分支已推进到本次发布之后的提交，或已有更新版本正在部署/已部署，停止并报告版本变化，不自行部署旧版本或改部署新版本。确认无版本变化后调用 `POST projects/<project>/jobs/<job-id>/play`。本项目作业为 `deploy-production`。
+5. 生产的 `when: manual`、`allow_failure: false` 会使流水线停在 manual/blocked；这是预期部署门禁，不要求整条流水线先 success。只有匹配授权的部署作业可触发；其他手动审批或阻塞仍需停止。
+6. 部署作业已经 pending/running 时只等待，已经 success 时只验收，不重复触发。对应部署作业为 failed 或 canceled 时立即按异常处理，停止等待，不重试或重新触发。默认部署验收以对应部署作业 success 为完成依据，不代表页面或业务功能已经验证；任务要求线上验收时继续检查对应发布结果和环境。后续允许失败的通知作业不作为部署成功的前置条件。
 
-不要自动开始新的查询周期。只有新提交、新流水线或用户明确要求继续等待时，才重新查询。
+超时后回读一次并报告已完成阶段、剩余阶段及 Auto-merge 是否仍开启，不自动开始新一轮等待。等待超时本身不等于校验失败；已确认无异常的 Auto-merge 可保留。若生产部署尚未触发，明确说明需要后续继续执行，不能暗示 Agent 会在结束后自动部署。
 
-明确要求同步等待时，只使用 `glab` 做有限状态查询；不要加载其他流水线监控 Skill。
+## 异常默认交还用户
 
-## 部署授权边界
+冲突、审批缺失、服务端合并校验失败、配置差异、SHA 意外变化、合并/部署所需的权限或 API 错误、自动合并无法登记或无法确认等异常出现时，按以下规则处理。仅用于展示的其他关联流水线失败或列表查询不完整，如实报告，不据此取消自动合并；已授权部署的前置检查仍按部署规则执行。
 
-MR 合并与环境部署是两个独立动作：
+1. 停止后续合并和部署；除下一条取消自动合并外，只做必要的只读查询以说明原因。不自行解决冲突、rebase、强推、重试失败 Job、修改 CI、跳过校验或降低门禁。源分支被外部删除也按异常处理，不自行重建。
+2. 若 MR 仍未合并且 Auto-merge 已开启，调用取消自动合并接口 `POST projects/<project>/merge_requests/<iid>/cancel_merge_when_pipeline_succeeds`，然后回读确认已关闭，避免异常消除后意外合并。取消失败或已发生合并时明确报告实际状态；不声称已阻止合并，不自动回滚。
+3. 报告具体异常、失败或阻塞 Job、当前 MR 状态、Auto-merge 状态及规范链接，交由用户决定下一步。只有用户后续明确授权处理异常才进入修复流程。
 
-- 用户只要求创建、检查或合并 MR 时，不触发手动部署 Job。
-- 用户明确要求发布到对应环境时，才可触发该环境的手动部署 Job。
-- 发现 `manual`、`blocked`、`scheduled` 或等待审批的 Job 时，报告 Job 名称和规范链接后结束，不持续查询。
-- 任务涉及部署验收时，不只看流水线顶层状态；使用 `glab api 'projects/<url-encoded-project>/pipelines/<pipeline-id>/jobs?include_retried=true&per_page=100'` 查询对应部署 Job。
-- 只有对应部署 Job 成功后，才报告环境部署完成。
+## 交付
 
-默认顺序：`gitlab-mr-description` → `gitlab-url-guard` → `glab` 创建 MR → `glab` 登记 Auto-merge → `gitlab-url-guard` 生成交付链接。
+简要列出目标环境与分支、MR 链接、实际达到的状态、本次 MR 关联流水线清单（ID、类型/source、ref、短 SHA、状态、规范链接）、部署 Job 链接及待处理项。严格区分“MR 已创建”“自动合并已登记”“MR 已合并”“部署已触发”“部署已完成”，不把未来的 CI 动作表述为已完成，也不把关联流水线清单称为 GitLab 必须等待的全部流水线。

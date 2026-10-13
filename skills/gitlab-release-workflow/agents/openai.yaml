@@ -1,4 +1,4 @@
 interface:
   display_name: "GitLab 发布工作流"
-  short_description: "编排 GitLab MR、流水线、自动合并、部署授权与发布验收流程"
-  default_prompt: "使用 $gitlab-release-workflow 创建或更新 GitLab MR，并按要求完成流水线检查、自动合并或部署验收。"
+  short_description: "使用 pr 编写描述，按环境自动合并，显式授权生产部署，异常停止交还用户"
+  default_prompt: "使用 $gitlab-release-workflow 提交 PR 到指定环境并合并；仅在明确要求部署时触发生产部署，遇到异常停止并报告。"
