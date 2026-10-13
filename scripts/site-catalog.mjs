@@ -188,7 +188,7 @@ export async function loadCatalog(options = {}) {
   const config = JSON.parse(configSource);
   const gitmodules = parseGitmodules(gitmodulesSource);
   const originUrl = repositoryWebUrl(runGitCommand(['remote', 'get-url', 'origin'], { allowFailure: true }))
-    ?? 'https://github.com/BINGWU2003/skills';
+    ?? 'https://github.com/bingwu-devkit/skills';
   const filesBySkill = new Map();
 
   for (const trackedFile of trackedFiles) {
@@ -298,7 +298,7 @@ export async function loadCatalog(options = {}) {
       markdown: parsed.content.trim(),
       files,
       updatedAt,
-      installCommand: `npx skills add BINGWU2003/skills --skill ${[skillName, ...skillDependencies].join(' ')}`,
+      installCommand: `npx skills add bingwu-devkit/skills --skill ${[skillName, ...skillDependencies].join(' ')}`,
       skillDependencies,
       requirements,
       publishedSourceUrl: `${originUrl}/tree/main/skills/${skillName}`,

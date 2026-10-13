@@ -207,7 +207,7 @@ describe('loadCatalog', () => {
       categoryLabel: '开发工程',
       markdown: 'Alpha body',
       skillDependencies: ['beta'],
-      installCommand: 'npx skills add BINGWU2003/skills --skill alpha beta',
+      installCommand: 'npx skills add bingwu-devkit/skills --skill alpha beta',
       publishedSourceUrl: 'https://github.com/example/catalog/tree/main/skills/alpha',
     });
     expect(catalog[0].metadata).toEqual([{ key: 'disable-model-invocation', value: true }]);

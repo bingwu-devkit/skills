@@ -86,7 +86,7 @@
       {
         "title": "首次配置",
         "description": "预览渲染器需要 uv 和 Playwright；安装后请按随附 README 完成配置。",
-        "url": "https://github.com/BINGWU2003/skills/blob/main/skills/excalidraw-diagram/README.md"
+        "url": "https://github.com/bingwu-devkit/skills/blob/main/skills/excalidraw-diagram/README.md"
       }
     ]
   },
@@ -120,7 +120,7 @@
       {
         "title": "pr Skill",
         "description": "创建或更新 MR 前，根据实际差异与验证证据，使用 Summary、Evidence、Merge Danger 结构编写中文描述；随本 Skill 一起安装。",
-        "url": "https://github.com/BINGWU2003/skills/tree/main/skills/pr"
+        "url": "https://github.com/bingwu-devkit/skills/tree/main/skills/pr"
       }
     ]
   },

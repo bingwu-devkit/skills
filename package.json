@@ -1,8 +1,12 @@
 {
-  "name": "@bingwu2003/skills",
+  "name": "@bingwu-devkit/skills",
   "version": "0.0.0",
   "private": true,
   "description": "BINGWU2003 的 Agent Skills 聚合仓库",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bingwu-devkit/skills.git"
+  },
   "type": "module",
   "scripts": {
     "lint": "oxlint scripts tests site vitest.config.mjs",

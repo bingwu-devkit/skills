@@ -12,13 +12,13 @@
 先查看仓库中可安装的 Skill：
 
 ```bash
-npx skills add BINGWU2003/skills --list
+npx skills add bingwu-devkit/skills --list
 ```
 
 安装指定 Skill：
 
 ```bash
-npx skills add BINGWU2003/skills --skill agent-git
+npx skills add bingwu-devkit/skills --skill agent-git
 ```
 
 默认安装到当前项目；如需安装到用户级目录，追加 `--global`。也可以把
@@ -29,7 +29,7 @@ npx skills add BINGWU2003/skills --skill agent-git
 环境要求：Node.js `>=22.20.0`、pnpm `10.34.4`。
 
 ```bash
-git clone --recurse-submodules https://github.com/BINGWU2003/skills.git
+git clone --recurse-submodules https://github.com/bingwu-devkit/skills.git
 cd skills
 pnpm install
 ```
