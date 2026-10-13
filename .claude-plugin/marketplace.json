@@ -21,6 +21,7 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./skills/conventional-git",
         "./skills/gitlab-release-workflow",
         "./skills/gitlab-url-guard",
         "./skills/pr"

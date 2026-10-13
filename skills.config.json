@@ -21,6 +21,16 @@
       }
     ]
   },
+  "conventional-git": {
+    "category": "repository-workflow",
+    "requirements": [
+      {
+        "title": "Git（按需）",
+        "description": "实际创建分支、检查仓库或提交代码时需要可用的 git 命令；仅生成命名建议或检查提交信息格式时无需安装。",
+        "url": "https://git-scm.com/downloads"
+      }
+    ]
+  },
   "design-site-icon": {
     "category": "visual-design",
     "requirements": [

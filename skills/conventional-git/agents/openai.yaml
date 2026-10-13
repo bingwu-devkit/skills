@@ -1,0 +1,6 @@
+interface:
+  display_name: "Git 分支与中文提交"
+  short_description: "统一 Git 分支命名，生成符合 Conventional Commits 的简体中文提交信息"
+
+policy:
+  allow_implicit_invocation: true
