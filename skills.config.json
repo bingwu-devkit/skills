@@ -21,6 +21,12 @@
       }
     ]
   },
+  "business-enums-display-config": {
+    "category": "development"
+  },
+  "no-fallback-single-source": {
+    "category": "development"
+  },
   "conventional-git": {
     "category": "repository-workflow",
     "requirements": [
