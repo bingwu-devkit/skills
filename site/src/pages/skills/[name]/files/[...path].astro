@@ -23,11 +23,11 @@ if (file.kind === 'markdown' || file.kind === 'text') {
   content = await readFile(file.absolutePath, 'utf8');
 }
 if (file.kind === 'markdown') {
-  html = renderMarkdown(content, {
+  html = (await renderMarkdown(content, {
     skillName: skill.name,
     currentPath: file.path,
     filePaths,
-  }).html;
+  })).html;
 }
 ---
 

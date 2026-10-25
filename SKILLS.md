@@ -53,5 +53,4 @@
 ### `ian-xiaohei-illustrations`
 
 生成或编辑配图时需要运行环境提供内置 `image_gen` 工具；仅规划配图策略时无需生图工具。
-Skill 由 [Ian](https://github.com/helloianneo) 创建，随附示例图用于风格校准；
-许可声明见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
+Skill 由 [Ian](https://github.com/helloianneo) 创建，随附示例图用于风格校准。

@@ -1,7 +1,8 @@
 import path from 'node:path';
 
-import { marked, Renderer } from 'marked';
+import { marked, Renderer, type Token } from 'marked';
 import sanitizeHtml from 'sanitize-html';
+import { bundledLanguages, codeToHtml } from 'shiki';
 
 import { fileHref, rawFileHref } from './paths';
 
@@ -33,13 +34,27 @@ function isExternal(href: string): boolean {
   return /^(?:[a-z]+:|\/\/)/i.test(href);
 }
 
-export function renderMarkdown(markdown: string, options: RenderOptions): { html: string; toc: TocItem[] } {
+export async function renderMarkdown(markdown: string, options: RenderOptions): Promise<{ html: string; toc: TocItem[] }> {
   const toc: TocItem[] = [];
   const seenSlugs = new Map<string, number>();
   const currentDirectory = path.posix.dirname(options.currentPath);
   const tokens = marked.lexer(markdown, { gfm: true });
+  const highlightedCode = new Map<Token, string>();
 
-  marked.walkTokens(tokens, token => {
+  await Promise.all(marked.walkTokens(tokens, token => {
+    if (token.type === 'code') {
+      const language = token.lang?.trim().split(/\s+/, 1)[0].toLowerCase() ?? '';
+      if (Object.hasOwn(bundledLanguages, language)) {
+        return codeToHtml(token.text, {
+          lang: language,
+          theme: 'github-dark-default',
+        }).then(html => {
+          highlightedCode.set(token, html);
+        });
+      }
+      return;
+    }
+
     if ((token.type !== 'link' && token.type !== 'image') || !('href' in token)) {
       return;
     }
@@ -58,9 +73,11 @@ export function renderMarkdown(markdown: string, options: RenderOptions): { html
     token.href = token.type === 'image'
       ? rawFileHref(options.skillName, resolvedPath)
       : fileHref(options.skillName, `${resolvedPath}${fragment ? `#${fragment}` : ''}`);
-  });
+  }));
 
   const renderer = new Renderer();
+  const renderPlainCode = renderer.code.bind(renderer);
+  renderer.code = token => highlightedCode.get(token) ?? renderPlainCode(token);
   renderer.heading = function ({ tokens: headingTokens, depth }) {
     const text = this.parser.parseInline(headingTokens);
     const plainText = text.replace(/<[^>]+>/g, '');
@@ -85,6 +102,20 @@ export function renderMarkdown(markdown: string, options: RenderOptions): { html
       img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
       input: ['type', 'checked', 'disabled'],
       code: ['class'],
+      pre: ['class', 'style', 'tabindex'],
+      span: ['class', 'style'],
+    },
+    allowedStyles: {
+      pre: {
+        color: [/^#[\da-f]{3,8}$/i],
+        'background-color': [/^#[\da-f]{3,8}$/i],
+      },
+      span: {
+        color: [/^#[\da-f]{3,8}$/i],
+        'font-style': [/^italic$/],
+        'font-weight': [/^bold$/],
+        'text-decoration': [/^underline$/],
+      },
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: {
