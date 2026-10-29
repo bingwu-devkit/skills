@@ -82,13 +82,68 @@ describe('check-site-links', () => {
     await writeFile(path.join(distRoot, 'index.html'), '<a href="/guide/">Guide</a><script src="//cdn.example.com/x.js"></script>');
     await writeFile(path.join(distRoot, 'guide', 'index.html'), '<a href="../">Home</a><a href="missing">Missing</a>');
 
-    expect(await checkLinks({ repoRoot: root, distRoot })).toEqual([
+    expect(await checkLinks({ repoRoot: root, distRoot, config: {} })).toEqual([
       `${path.join('site', 'dist', 'guide', 'index.html')} -> missing`,
+    ]);
+  });
+
+  it('excludes submodule file contents while checking site pages and locally maintained files', async () => {
+    const root = await temporaryDirectory();
+    const distRoot = path.join(root, 'site', 'dist');
+    await writeFile(path.join(root, 'skills.config.json'), JSON.stringify({
+      upstream: { submodule: 'sources/upstream', skillPath: '.' },
+      local: { category: 'development' },
+    }));
+    const pages = {
+      'index.html': '<a href="/skills/upstream/files/README.md/">Preview</a><a href="/downloads/skills/upstream/fixture.html">Download</a>',
+      'skills/upstream/files/README.md/index.html': '<a href="upstream-missing">Upstream</a>',
+      'downloads/skills/upstream/fixture.html': '<img src="does-not-exist.png">',
+      'skills/upstream/index.html': '<a href="missing">Detail page</a>',
+      'skills/local/files/README.md/index.html': '<a href="missing">Local preview</a>',
+      'downloads/skills/local/fixture.html': '<img src="missing.png">',
+      'skills/upstream-extra/files/README.md/index.html': '<a href="missing">Another skill</a>',
+      'skills/upstream/files-other/index.html': '<a href="missing">Another page</a>',
+    };
+    for (const [file, html] of Object.entries(pages)) {
+      const absolutePath = path.join(distRoot, file);
+      await mkdir(path.dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, html);
+    }
+
+    const failures = await checkLinks({ repoRoot: root, distRoot });
+
+    expect(failures).toHaveLength(5);
+    expect(failures).toEqual(expect.arrayContaining([
+      `${path.join('site', 'dist', 'skills', 'upstream', 'index.html')} -> missing`,
+      `${path.join('site', 'dist', 'skills', 'local', 'files', 'README.md', 'index.html')} -> missing`,
+      `${path.join('site', 'dist', 'downloads', 'skills', 'local', 'fixture.html')} -> missing.png`,
+      `${path.join('site', 'dist', 'skills', 'upstream-extra', 'files', 'README.md', 'index.html')} -> missing`,
+      `${path.join('site', 'dist', 'skills', 'upstream', 'files-other', 'index.html')} -> missing`,
+    ]));
+  });
+
+  it('still reports missing external file previews and downloads linked from site pages', async () => {
+    const root = await temporaryDirectory();
+    const distRoot = path.join(root, 'site', 'dist');
+    await mkdir(distRoot, { recursive: true });
+    await writeFile(path.join(distRoot, 'index.html'), [
+      '<a href="/skills/upstream/files/missing.md/">Missing preview</a>',
+      '<a href="/downloads/skills/upstream/missing.html">Missing download</a>',
+    ].join('\n'));
+
+    expect(await checkLinks({
+      repoRoot: root,
+      distRoot,
+      config: { upstream: { submodule: 'sources/upstream' } },
+    })).toEqual([
+      `${path.join('site', 'dist', 'index.html')} -> /skills/upstream/files/missing.md/`,
+      `${path.join('site', 'dist', 'index.html')} -> /downloads/skills/upstream/missing.html`,
     ]);
   });
 
   it('aggregates malformed paths and resolver errors', async () => {
     const failures = await checkLinks({
+      config: {},
       repoRoot: path.resolve('repo'),
       distRoot: path.resolve('repo', 'dist'),
       collectFiles: async () => [path.resolve('repo', 'dist', 'index.html')],
@@ -105,10 +160,11 @@ describe('check-site-links', () => {
 
   it('prints success and throws one aggregated CLI error', async () => {
     const logger = { log: vi.fn() };
-    await main({ collectFiles: async () => [], logger, distRoot: path.resolve('dist') });
+    await main({ config: {}, collectFiles: async () => [], logger, distRoot: path.resolve('dist') });
     expect(logger.log).toHaveBeenCalledWith('站内链接检查通过。');
 
     await expect(main({
+      config: {},
       repoRoot: path.resolve('repo'),
       distRoot: path.resolve('repo', 'dist'),
       collectFiles: async () => [path.resolve('repo', 'dist', 'index.html')],

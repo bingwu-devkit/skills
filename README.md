@@ -158,6 +158,9 @@ pnpm run check
 
 该命令校验分组清单、检查 Skill 发现结果并运行测试，不会修改仓库文件。
 清单缺失或过期时会提示运行 `pnpm run groups:generate`。
+`pnpm run site:check` 还会构建网站并检查站内链接。链接检查根据 `skills.config.json`
+中的 `submodule` 排除外部 Skill 的文件预览页和原始下载文件内部的链接；本站页面、
+Skill 详情页及指向预览和下载文件的链接仍受校验。
 也可以使用以下命令单独查看结果：
 
 ```bash

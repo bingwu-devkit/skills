@@ -91,14 +91,27 @@ export async function checkLinks(options = {}) {
   const repoRoot = options.repoRoot ?? defaultRepoRoot;
   const distRoot = options.distRoot ?? path.resolve(repoRoot, 'site', 'dist');
   const readTextFile = options.readTextFile ?? readFile;
+  const config = options.config
+    ?? JSON.parse(await readTextFile(path.join(repoRoot, 'skills.config.json'), 'utf8'));
+  const excludedPrefixes = Object.entries(config)
+    .filter(([, skill]) => skill.submodule)
+    .flatMap(([name]) => [
+      `skills/${name}/files/`,
+      `downloads/skills/${name}/`,
+    ]);
   const collectFiles = options.collectFiles ?? collectHtmlFiles;
   const resolveTarget = options.resolveTarget
     ?? (urlPath => resolveBuiltTarget(urlPath, { distRoot, statPath: options.statPath }));
   const failures = [];
 
   for (const htmlFile of await collectFiles(distRoot)) {
+    const relativePath = path.relative(distRoot, htmlFile).replaceAll('\\', '/');
+    // 外部 Skill 的仓库文件按上游原样发布，不校验其预览页和下载文件内部的链接。
+    if (excludedPrefixes.some(prefix => relativePath.startsWith(prefix))) {
+      continue;
+    }
     const html = await readTextFile(htmlFile, 'utf8');
-    const currentPath = `/${path.relative(distRoot, htmlFile).replaceAll('\\', '/').replace(/index\.html$/, '')}`;
+    const currentPath = `/${relativePath.replace(/index\.html$/, '')}`;
     for (const rawTarget of extractTargets(html)) {
       if (shouldSkipTarget(rawTarget)) {
         continue;
