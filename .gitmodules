@@ -34,3 +34,6 @@
 [submodule "sources/ian-xiaohei-illustrations"]
 	path = sources/ian-xiaohei-illustrations
 	url = https://github.com/helloianneo/ian-xiaohei-illustrations.git
+[submodule "sources/huashu-design"]
+	path = sources/huashu-design
+	url = https://github.com/alchaincyf/huashu-design.git

@@ -19,6 +19,7 @@
 | [`gitlab-release-workflow`](skills/gitlab-release-workflow/) | 编排 GitLab MR、流水线、自动合并、部署授权和发布验收。 |
 | [`gitlab-url-guard`](skills/gitlab-url-guard/) | 构造、规范化并校验 GitLab MR、流水线、作业和提交链接。 |
 | [`grilling`](skills/grilling/) | 通过结构化的深入访谈，系统梳理计划、设计或决策中的关键问题。 |
+| [`huashu-design`](skills/huashu-design/) | 创建 HTML 高保真原型、幻灯片、动画与可视化，支持设计方向探索、专家评审及 PPTX、MP4/GIF 导出。 |
 | [`ian-xiaohei-illustrations`](skills/ian-xiaohei-illustrations/) | 为中文文章规划并生成 Ian 小黑风格的 16:9 白底手绘正文配图。 |
 | [`imgrelay`](skills/imgrelay/) | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。 |
 | [`ip-as-logo`](skills/ip-as-logo/) | 创建简洁、拟人化的方形角色图标与 IP 形象候选。 |
@@ -54,3 +55,12 @@
 
 生成或编辑配图时需要运行环境提供内置 `image_gen` 工具；仅规划配图策略时无需生图工具。
 Skill 由 [Ian](https://github.com/helloianneo) 创建，随附示例图用于风格校准。
+
+### `huashu-design`
+
+随附脚本需要 Python 3；截图和设计体检需安装 `playwright`、`pillow` 及 Chromium：
+`pip install playwright pillow`，然后运行 `python -m playwright install chromium`。
+使用 Node.js 的 PDF/PPTX 导出脚本时，在 Skill 目录运行 `npm install` 安装随附依赖；
+Python PPTX 导出脚本另需 `python-pptx`。视频渲染、格式转换和混音需要 FFmpeg，
+随附 `.sh` 脚本需要 Bash 环境。完整使用说明见随附的
+[`README.md`](skills/huashu-design/README.md)。

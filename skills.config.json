@@ -155,6 +155,33 @@
     "submodule": "sources/mattpocock-skills",
     "skillPath": "skills/productivity/grilling"
   },
+  "huashu-design": {
+    "category": "visual-design",
+    "submodule": "sources/huashu-design",
+    "skillPath": ".",
+    "requirements": [
+      {
+        "title": "Python 3",
+        "description": "运行偏好记录、能力探测、设计体检和参考板等随附脚本时需要 Python 3；Windows 使用 python 命令。",
+        "url": "https://www.python.org/downloads/"
+      },
+      {
+        "title": "Playwright、Chromium 与 Pillow",
+        "description": "截图、参考板和设计体检需要 pip install playwright pillow，并运行 python -m playwright install chromium。",
+        "url": "https://playwright.dev/python/docs/intro"
+      },
+      {
+        "title": "Node.js 与 npm（按需）",
+        "description": "使用 Node.js 导出脚本时，在 Skill 目录运行 npm install 安装 Playwright、pdf-lib、pptxgenjs 和 sharp；使用 Python PPTX 导出脚本时另需 python-pptx。",
+        "url": "https://nodejs.org/en/download"
+      },
+      {
+        "title": "FFmpeg 与 Bash（按需）",
+        "description": "渲染视频、转换 MP4/GIF、混音及视频校验时需要 FFmpeg（含 ffprobe）；运行随附 .sh 脚本还需要 Bash 环境。",
+        "url": "https://ffmpeg.org/download.html"
+      }
+    ]
+  },
   "tdd": {
     "category": "development",
     "submodule": "sources/mattpocock-skills",
