@@ -35,7 +35,6 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/archify",
         "./skills/drawio-skill",
         "./skills/excalidraw-diagram",
         "./skills/excalidraw-diagram-generator"

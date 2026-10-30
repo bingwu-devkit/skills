@@ -219,23 +219,6 @@
       }
     ]
   },
-  "archify": {
-    "category": "diagramming",
-    "submodule": "sources/archify",
-    "skillPath": "archify",
-    "requirements": [
-      {
-        "title": "Node.js 18+",
-        "description": "运行 Archify CLI、校验、交付和预览命令时需要 Node.js 18 或更高版本。",
-        "url": "https://nodejs.org/en/download"
-      },
-      {
-        "title": "Chrome/Chromium（可选）",
-        "description": "仅运行 visual-check 自动浏览器取证时需要；未安装时可跳过浏览器检查。",
-        "url": "https://www.chromium.org/getting-involved/download-chromium/"
-      }
-    ]
-  },
   "show-me": {
     "category": "development",
     "submodule": "sources/humanlayer-skills",

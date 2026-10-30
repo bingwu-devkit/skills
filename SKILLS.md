@@ -11,7 +11,6 @@
 | Skill | 用途 |
 | --- | --- |
 | [`agent-git`](skills/agent-git/) | 使用 checkpoint、status、undo 和 squash 工作流，帮助 Agent 安全管理 Git 修改。 |
-| [`archify`](skills/archify/) | 创建可交互浏览和导出的架构、流程、时序、数据流及状态图。 |
 | [`design-site-icon`](skills/design-site-icon/) | 为网站设计手写签名式线性 SVG 图标并接入项目，覆盖动态 favicon、明暗主题和小尺寸适配。 |
 | [`drawio-skill`](skills/drawio-skill/) | 创建 Draw.io 图表，并通过桌面版 CLI 导出 PNG、SVG、PDF 或 JPG。 |
 | [`excalidraw-diagram`](skills/excalidraw-diagram/) | 根据自然语言创建 Excalidraw 图表，并通过渲染检查迭代优化视觉效果。 |
