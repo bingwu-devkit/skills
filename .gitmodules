@@ -34,3 +34,6 @@
 [submodule "sources/huashu-design"]
 	path = sources/huashu-design
 	url = https://github.com/alchaincyf/huashu-design.git
+[submodule "sources/can-i-publish"]
+	path = sources/can-i-publish
+	url = https://github.com/BINGWU2003/can-i-publish.git

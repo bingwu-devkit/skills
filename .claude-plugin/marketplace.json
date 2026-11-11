@@ -23,6 +23,7 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./skills/can-i-publish",
         "./skills/conventional-git",
         "./skills/gitlab-release-workflow",
         "./skills/gitlab-url-guard",

@@ -11,6 +11,7 @@
 | Skill | 用途 |
 | --- | --- |
 | [`agent-git`](skills/agent-git/) | 使用 checkpoint、status、undo 和 squash 工作流，帮助 Agent 安全管理 Git 修改。 |
+| [`can-i-publish`](skills/can-i-publish/) | 检查 npm 包名、组织名及 scoped 包名的可用性，识别占用和相似度限制，并查找替代名称。 |
 | [`design-site-icon`](skills/design-site-icon/) | 为网站设计手写签名式线性 SVG 图标并接入项目，覆盖动态 favicon、明暗主题和小尺寸适配。 |
 | [`drawio-skill`](skills/drawio-skill/) | 创建 Draw.io 图表，并通过桌面版 CLI 导出 PNG、SVG、PDF 或 JPG。 |
 | [`excalidraw-diagram`](skills/excalidraw-diagram/) | 根据自然语言创建 Excalidraw 图表，并通过渲染检查迭代优化视觉效果。 |
@@ -28,6 +29,13 @@
 | [`weekly-git-report`](skills/weekly-git-report/) | 根据 Git 提交记录生成、整理或保存周报。 |
 
 ## 特殊安装与依赖
+
+### `can-i-publish`
+
+需要 Node.js 与 npm，通过 `npx -y can-i-publish` 运行，无需全局安装。
+相似度检查需要 `NPM_TOKEN` 或用户主目录 `.npmrc` 中的 npm 凭据，并会发送带鉴权的
+发布探测请求；无凭据时仍可检查 registry 占用情况。完整操作说明见随附的
+[`SKILL.md`](skills/can-i-publish/SKILL.md)。
 
 ### `excalidraw-diagram`
 

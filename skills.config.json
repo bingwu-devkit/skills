@@ -24,6 +24,23 @@
   "business-enums-display-config": {
     "category": "development"
   },
+  "can-i-publish": {
+    "category": "repository-workflow",
+    "submodule": "sources/can-i-publish",
+    "skillPath": "skills/can-i-publish",
+    "requirements": [
+      {
+        "title": "Node.js 与 npm",
+        "description": "通过 npx -y can-i-publish 临时运行 CLI，检查 npm 包名、组织名及 scoped 包名，无需全局安装。",
+        "url": "https://nodejs.org/en/download"
+      },
+      {
+        "title": "npm 凭据（可选）",
+        "description": "相似度检查需要 NPM_TOKEN 或用户主目录 .npmrc 中的 npm 凭据，并会发送带鉴权的发布探测请求；无凭据时仍可检查 registry 占用情况。",
+        "url": "https://github.com/BINGWU2003/can-i-publish#how-it-works"
+      }
+    ]
+  },
   "no-fallback-single-source": {
     "category": "development"
   },

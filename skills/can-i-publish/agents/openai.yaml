@@ -1,0 +1,4 @@
+interface:
+  display_name: "npm 包名检查"
+  short_description: "检查 npm 包名可用性、相似度限制与占用状态，并寻找替代名称"
+  default_prompt: "使用 $can-i-publish 检查这些 npm 包名，说明检查范围，并为不可用名称寻找替代名称。"
