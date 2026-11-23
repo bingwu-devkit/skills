@@ -102,6 +102,8 @@ pnpm run sources:add -- <repository-url> sources/<project-name>
 
 不要直接修改由外部来源同步生成的 `skills/<skill-name>/`；同步时保持上游目录和
 frontmatter 原样。改动应先在来源项目中完成，再同步到本仓库。
+如果许可证位于上游仓库根目录，可以设置 `"includeRootLicense": true`，让更新命令
+将上游的 `LICENSE` 一并放入发布目录，优先保留 Skill 目录自带的 `LICENSE`。
 
 ### 维护 Skill 分类
 

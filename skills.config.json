@@ -214,6 +214,18 @@
     "submodule": "sources/mattpocock-skills",
     "skillPath": "skills/engineering/pr"
   },
+  "requesting-code-review": {
+    "category": "development",
+    "submodule": "sources/superpowers",
+    "skillPath": "skills/requesting-code-review",
+    "includeRootLicense": true,
+    "requirements": [
+      {
+        "title": "Git 与子代理支持",
+        "description": "使用 Git 确定审查的提交范围，并将变更摘要和需求交给支持独立执行的审查子代理。"
+      }
+    ]
+  },
   "weekly-git-report": {
     "category": "productivity",
     "submodule": "sources/weekly-git-report",

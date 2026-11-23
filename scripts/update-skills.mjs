@@ -110,6 +110,7 @@ export async function updateSkill(skillName, config, options = {}) {
   const submodulePath = path.resolve(repoRoot, config.submodule);
   const sourcePath = path.resolve(submodulePath, config.skillPath);
   const destinationPath = path.resolve(repoRoot, "skills", skillName);
+  const licensePath = config.includeRootLicense ? path.join(submodulePath, "LICENSE") : null;
 
   assertInside(repoRoot, submodulePath, "子模块路径");
   assertInside(submodulePath, sourcePath, "Skill 来源路径", {
@@ -123,6 +124,9 @@ export async function updateSkill(skillName, config, options = {}) {
     stdio: "inherit",
   });
   await ensureSkillExists(sourcePath, skillName);
+  if (licensePath && !(await stat(licensePath)).isFile()) {
+    throw new Error(`上游许可证不是文件：${licensePath}`);
+  }
 
   await removePath(destinationPath, { recursive: true, force: true });
   await makeDirectory(path.dirname(destinationPath), { recursive: true });
@@ -131,6 +135,9 @@ export async function updateSkill(skillName, config, options = {}) {
     force: true,
     filter: shouldCopySkillFile,
   });
+  if (licensePath) {
+    await copyPath(licensePath, path.join(destinationPath, "LICENSE"), { force: false });
+  }
 
   const sourceCommit = runGitCommand([
     "-C",

@@ -267,7 +267,10 @@ describe("update-skills", () => {
       await mkdir(upstreamRoot);
       await mkdir(repoRoot);
       git(upstreamRoot, ["init", "-b", "main"]);
-      await writeFile(path.join(upstreamRoot, "SKILL.md"), "版本 A\n");
+      const upstreamSkill = path.join(upstreamRoot, "skills", "alpha");
+      await mkdir(upstreamSkill, { recursive: true });
+      await writeFile(path.join(upstreamSkill, "SKILL.md"), "版本 A\n");
+      await writeFile(path.join(upstreamRoot, "LICENSE"), "上游许可证 A\n");
       commitFixture(upstreamRoot);
 
       git(repoRoot, ["init", "-b", "main"]);
@@ -275,18 +278,22 @@ describe("update-skills", () => {
       const destination = path.join(repoRoot, "skills", "alpha");
       await mkdir(destination, { recursive: true });
       await writeFile(path.join(destination, "SKILL.md"), "版本 A\n");
+      await writeFile(path.join(destination, "LICENSE"), "上游许可证 A\n");
       await writeFile(path.join(destination, "obsolete.txt"), "过期文件\n");
       commitFixture(repoRoot);
       const recordedCommit = git(repoRoot, ["rev-parse", "HEAD"]);
       const recordedPointer = git(repoRoot, ["ls-files", "--stage", "sources/alpha"]);
 
-      await writeFile(path.join(upstreamRoot, "SKILL.md"), "版本 B\n");
+      await writeFile(path.join(upstreamSkill, "SKILL.md"), "版本 B\n");
+      await writeFile(path.join(upstreamRoot, "LICENSE"), "上游许可证 B\n");
       commitFixture(upstreamRoot);
       const latestCommit = git(upstreamRoot, ["rev-parse", "HEAD"]);
 
       await main(["alpha"], {
         repoRoot,
-        config: { alpha: { submodule: "sources/alpha", skillPath: "." } },
+        config: {
+          alpha: { submodule: "sources/alpha", skillPath: "skills/alpha", includeRootLicense: true },
+        },
         runGitCommand: (args) => git(repoRoot, args),
         logger: { log: vi.fn() },
       });
@@ -295,7 +302,8 @@ describe("update-skills", () => {
       expect(git(submoduleRoot, ["rev-parse", "HEAD"])).toBe(latestCommit);
       const publishedContent = await readFile(path.join(destination, "SKILL.md"), "utf8");
       expect(publishedContent.trim()).toBe("版本 B");
-      expect(publishedContent).toBe(await readFile(path.join(submoduleRoot, "SKILL.md"), "utf8"));
+      expect(publishedContent).toBe(await readFile(path.join(submoduleRoot, "skills", "alpha", "SKILL.md"), "utf8"));
+      expect((await readFile(path.join(destination, "LICENSE"), "utf8")).trim()).toBe("上游许可证 B");
       await expect(readFile(path.join(destination, "obsolete.txt"))).rejects.toMatchObject({
         code: "ENOENT",
       });

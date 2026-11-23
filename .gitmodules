@@ -37,3 +37,6 @@
 [submodule "sources/can-i-publish"]
 	path = sources/can-i-publish
 	url = https://github.com/BINGWU2003/can-i-publish.git
+[submodule "sources/superpowers"]
+	path = sources/superpowers
+	url = https://github.com/obra/superpowers.git

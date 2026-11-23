@@ -24,6 +24,7 @@
 | [`imgrelay`](skills/imgrelay/) | 通过本机 ImgRelay CLI 调用生图中转站，生成、保存并展示原图。 |
 | [`ip-as-logo`](skills/ip-as-logo/) | 创建简洁、拟人化的方形角色图标与 IP 形象候选。 |
 | [`pr`](skills/pr/) | 编写包含可视化摘要、验证证据和合并风险说明的 PR 描述。 |
+| [`requesting-code-review`](skills/requesting-code-review/) | 在功能完成后或合并前，按 Git 提交范围委派独立代码审查，并根据问题严重程度处理反馈。 |
 | [`show-me`](skills/show-me/) | 通过简洁图示、代码结构草图和 HTML 工具辅助理解。 |
 | [`tdd`](skills/tdd/) | 通过红—绿循环按公共接口逐步开发，并确保测试聚焦可观察行为。 |
 | [`weekly-git-report`](skills/weekly-git-report/) | 根据 Git 提交记录生成、整理或保存周报。 |
@@ -62,6 +63,11 @@
 
 生成或编辑配图时需要运行环境提供内置 `image_gen` 工具；仅规划配图策略时无需生图工具。
 Skill 由 [Ian](https://github.com/helloianneo) 创建，随附示例图用于风格校准。
+
+### `requesting-code-review`
+
+需要 Git 和支持委派子代理的 Agent。审查时向子代理提供变更摘要、需求以及起止提交，
+具体提示词见随附的 [审查模板](skills/requesting-code-review/code-reviewer.md)。
 
 ### `huashu-design`
 

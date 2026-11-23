@@ -13,6 +13,7 @@
         "./skills/business-enums-display-config",
         "./skills/grilling",
         "./skills/no-fallback-single-source",
+        "./skills/requesting-code-review",
         "./skills/show-me",
         "./skills/tdd"
       ]
