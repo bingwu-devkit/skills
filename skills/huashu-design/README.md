@@ -11,6 +11,10 @@
 [![Agent-Agnostic](https://img.shields.io/badge/Agent-Agnostic-blueviolet)](https://skills.sh)
 [![Skills](https://img.shields.io/badge/skills.sh-Compatible-green)](https://skills.sh)
 
+<!-- BOOK-PROMO-START 《图解Agent Skills》京东横幅，2026-12-21下线 -->
+<a href="https://item.jd.com/14829817.html"><img src="https://raw.githubusercontent.com/alchaincyf/alchaincyf/main/assets/book-agent-skills-jd-c.jpg" alt="纸质书《图解Agent Skills：让AI记住你的工作方式》已上市，点击去京东购买" width="100%"></a>
+<!-- BOOK-PROMO-END -->
+
 <br>
 
 **在你的 agent 里打一句话，拿回一份能交付的设计。**
@@ -19,7 +23,7 @@
 
 3 到 30 分钟，你能 ship 一段**产品发布动画**、一个能点击的 App 原型、一套能编辑的 PPT、一份印刷级的信息图。
 
-不是「AI 做的还行」那种水平——是看起来像大厂设计团队做的。给 skill 你的品牌资产（logo、色板、UI 截图），它会读懂你的品牌气质；什么都不给，**六张缩略图里挑出的三个真实方向 + 92 种带样张的风格库**也能兜底到不出 AI slop。
+不是「AI 做的还行」那种水平——是看起来像大厂设计团队做的。给 skill 你的品牌资产（logo、色板、UI 截图），它会读懂你的品牌气质；什么都不给，**六个候选里挑出的三个真实方向 + 92 种带样张的风格库**也能兜底到不出 AI slop。
 
 **你看到这篇 README 里的每一页设计，都是 huashu-design 自己做的。** 不是 Figma，不是 AE，就是一句话 prompt + skill 跑通。下次产品发布要做宣传片？现在你也能做。
 
@@ -31,7 +35,11 @@ npx skills add alchaincyf/huashu-design
 
 > 📣 **已改为 MIT 协议。** 自 2026-05-14 起本 skill 完全开源（[MIT License](LICENSE)），个人和**商用都免费**，无需事先授权。原「个人使用免费、企业商用需授权」的条款已作废。([查看变更](#license))
 
-> 🆕 **3.1：新增小红书图文。** 一组 3:4 竖图的八种范式——标本志、贴纸本、索引、长卷、日报、集换卡、留白、信息图，每个样张同时是能直接改的模板；一条命令切成成图，顺手查字号、出界、长卷跨缝和压字。[看样张](#设计方向顾问)
+> 🆕 **3.5：微信小程序来了，设计完能交给 WorkBuddy 做成真小程序。** 新增小程序模块，按 2026 年 11 月的微信规格设计（胶囊、导航栏、tabBar、5:4 转发卡片、主包 2MB），每个方向先想清楚它从哪被打开：群聊卡片、扫码，还是「最近使用」。定稿后一条命令导出交付包：750 宽逐屏截图、app.json 骨架、设计参数和体检。在 WorkBuddy 里可以接着把它做成原生小程序，实测 Hy4 flash 照交付包做出 6 页，主流程能点通。另外新增展示板组件（三种构图）、断网可开的离线打包，截图和体检脚本在 WorkBuddy 里也能直接跑。
+
+> 🆕 **3.4：App 原型换了一套想法，新增 App Store 宣传图。** 走查两届 App Store Awards 的 90 个入围作品，提炼出八条界面范式（各带样张）：先定「这个 App 管的事在现实里长什么样」，再画屏。新增商店宣传图模块（1320×2868，连幅、破框、搜索结果预览）。参考改成「看原图、量数字、借一层不借一身」，做完和参照并排对回去。界面里该是图的地方放真的图：自带生图的环境（Codex、豆包、WorkBuddy）直接生成，Claude Code、DeepSeek Harness 借本机 Codex 或你给的生图 API，不再用 emoji 和占位块顶替。
+
+> **3.1：新增小红书图文。** 一组 3:4 竖图的八种范式——标本志、贴纸本、索引、长卷、日报、集换卡、留白、信息图，每个样张同时是能直接改的模板；一条命令切成成图，顺手查字号、出界、长卷跨缝和压字。[看样张](#设计方向顾问)
 
 > **3.0：三个方向更敢，项目之间也不再长一个样。** 先出六张缩略图再挑三版做成真稿；风格库扩到 84 种（新增 App、中文与东亚两个分区），每种都有样张；参照作品先截图再动手；带一个只量事实的设计体检，和一本记住你做过什么样子的外观账本。[详见核心机制](#核心机制)
 
@@ -143,6 +151,16 @@ npx skills add alchaincyf/huashu-design
 > git clone https://github.com/alchaincyf/huashu-design.git ~/.claude/skills/huashu-design
 > ```
 
+### 在 WorkBuddy 等 agent 里装
+
+直接在对话里说：
+
+```
+帮我去GitHub：https://github.com/alchaincyf/huashu-design 安装这个skill的最新版本
+```
+
+更新也一样，把「安装」换成「更新」。手动装也行：把仓库下载解压，整个文件夹放进 `~/.workbuddy/skills/`，它会出现在「专家·技能·连接器 → 技能 → 已安装」里。
+
 ### DeepSeek Harness 插件
 
 本仓库同时是一个 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）插件。桌面端用户在「插件 → 添加插件」里填 GitHub 仓库地址，或者用命令行（桌面端的 profile 叫 `desktop`，网页版换成 `web`）：
@@ -186,7 +204,8 @@ dsh plugin --profile desktop add github:alchaincyf/huashu-design
 | 设计变体 | 3+ 并排对比 · Tweaks 实时调参 · 跨维度探索 | 10 min |
 | 信息图 / 可视化 | 印刷级排版 · 可导 PDF/PNG/SVG | 10 min |
 | 小红书图文 / 封面 | 3:4 一组图（≤18 张）· 8 种范式模板 · 长卷连续滑动 · 一条命令切图并体检 | 10–15 min |
-| 设计方向顾问 | **三套逻辑各出两个候选**（最佳设计师 + 同媒介获奖作品 + 秒数轮盘）· 六张缩略图挑三版真实视觉，另三张作备选 | 10 min |
+| App Store 宣传图 | 1320×2868 上架图（≤10 张）· 先拉同类目真实商店截图当参考 · 连幅自动切张 · 搜索结果缩略预览与体检 | 10–15 min |
+| 设计方向顾问 | **三套逻辑各出两个候选**（最佳设计师 + 同媒介获奖作品 + 秒数轮盘）· 六个候选挑三版真实视觉，另三个作备选 | 10 min |
 | 6 维度专家评审 | 概念/立意一票否决 + 5 个执行维度 · 雷达图 + Keep/Fix/Quick Wins · 可操作修复清单 | 3 min |
 
 ---
@@ -195,7 +214,7 @@ dsh plugin --profile desktop add github:alchaincyf/huashu-design
 
 ### 设计方向顾问
 
-模糊需求时的 fallback：**三套互补逻辑各出两个候选**——最佳设计师（预算无上限时最适合的设计师）+ 现实参照（同媒介的获奖作品，先截图亲眼看）+ 秒数轮盘（从风格库随机抽，打破惯性）。六个候选先画成一页缩略图，挑最强、最不一样的三版做成**真实视觉**让你看着选，另外三张作为备选一起给你。背后是 **92 种 HTML 原生风格库**（网页 20 + PPT 20 + 信息图 20 + App 12 + 中文与东亚 12 + 小红书 8，纯 CSS 无需生图），每种都有一张样张。
+模糊需求时的 fallback：**三套互补逻辑各出两个候选**——最佳设计师（预算无上限时最适合的设计师）+ 现实参照（同媒介的获奖作品，先截图亲眼看）+ 秒数轮盘（从风格库随机抽，打破惯性）。六个候选里挑最强、最不一样的三版做成**真实视觉**让你看着选，另外三个作为备选用一两句话告诉你。背后是 **92 种 HTML 原生风格库**（网页 20 + PPT 20 + 信息图 20 + App 12 + 中文与东亚 12 + 小红书 8，纯 CSS 无需生图），每种都有一张样张。
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/w3-fallback-advisor.gif" width="100%"></p>
 <p align="center"><sub>动图为 2.0 流程（三套逻辑直接各出一版）</sub></p>
@@ -314,7 +333,7 @@ A/B 测试（v1 vs v2，各跑 6 agent）：**v2 的稳定性方差比 v1 低 5 
 - 先对话澄清 + 主动索要参考（名字 / logo / 品牌色 / 喜欢的参考站），只问一轮
 - 取齐内容必需的真图（公共领域 / 免版权，脚本一键抓），再开工
 - **三套逻辑各出两个候选，共六个**：① 最佳设计师（两位气质不同的设计师，用他们的思维从头做）② 现实参照（两件**同媒介**的获奖作品——做 App 找 App、做 deck 找出版物；`scripts/ref_board.py` 先截图亲眼看，再拆网格、字号比和色彩比例）③ 秒数轮盘（`date +%S` 取秒，在产出形态对应的分区和中文东亚分区各抽一号，先看样张再动手）
-- **六张缩略图 → 挑三版做完整稿**：单看够好、彼此不一样、不撞你最近的项目；没选上的三张作为备选一起给你，看中哪张再做
+- **六个候选 → 挑三版做完整稿**：单看够好、彼此不一样、不撞你最近的项目；没选上的三个作为备选告诉你，看中哪个再做
 - **绝不让你在没看到视觉时盲选风格**——摆出来就停，看着选
 - 底层是 **92 种 HTML 原生风格库**，每种配一张样张和源码（`assets/style-specimens/`），作弹药，不是教条
 
@@ -324,7 +343,7 @@ A/B 测试（v1 vs v2，各跑 6 agent）：**v2 的稳定性方差比 v1 低 5 
 
 - **经验**：`scripts/learn.py` 开工前带出你说过的品味原话（「太素了」「A 的结构加 C 的颜色」）和过去的教训，收工时把值得记的记下来；记录前会告诉你，不想记可以拒绝
 - **外观账本**：每次交付记一笔「长什么样」（底色、色板、字体、版式骨架，连同项目名和所在路径），下个项目主动避开——单个项目看都不错、放在一起却长得像，这种单调靠它管
-- **打磨环**：`scripts/polish.py` 把页面按原尺寸逐屏截图，模型看着自己的截图改一轮再交；它会报「连续几屏只有文字和框」「缩略图还是占位色块」这类事实，打磨记录空着也会提醒。轻量模型或脚本报警时走稳妥轨道（`references/steady-track.md`）：从样张改起、先写逐屏稿、每屏从形式菜单里挑
+- **打磨环**：`scripts/polish.py` 把页面按原尺寸逐屏截图，模型看着自己的截图改一轮再交；它会报「连续几屏只有文字和框」这类事实，打磨记录空着也会提醒。轻量模型或脚本报警时走稳妥轨道（`references/steady-track.md`）：从样张改起、先写逐屏稿、每屏从形式菜单里挑
 - **设计体检**：`scripts/design_lint.py` 只量能核对的事实——图裂了、字小到读不了、对比度不够、控制台报错是红灯；全大写小标签、「A · B · C」这类顺手的模板装饰是黄灯；三版是不是换皮、和最近的项目撞没撞，`compare` 和 `ledger check` 来查。好不好看归你判断，它不打分
 - 这些记录只存在你本机的 `~/.huashu-design/`，不随 skill 分发，删掉文件夹就全部忘记
 
@@ -399,15 +418,17 @@ huashu-design/
 │   ├── deck_index.html      # 多文件 deck 拼接器
 │   ├── design_canvas.jsx    # 并排变体展示
 │   ├── showcases/           # 24 个预制样例（8 场景 × 3 风格，索引见 INDEX.md）
-│   ├── style-specimens/     # 92 种风格的样张（html 源码 + jpg）与分区总览；xhs/ 的样张同时是模板
+│   ├── style-specimens/     # 92 种风格的样张（html 源码 + jpg）与分区总览；xhs/ 的样张同时是模板；paradigm/ 是 8 条 App 界面范式
+│   ├── appstore/            # App Store 宣传图模板
 │   └── bgm-*.mp3            # 6 首场景化背景音乐
 ├── references/              # 按任务深入读的子文档
 │   ├── animation-pitfalls.md
-│   ├── directions.md        # 三方向：六个候选 → 缩略图 → 挑三版
+│   ├── directions.md        # 三方向：六个候选 → 挑三版
 │   ├── polish-loop.md       # 打磨环：逐屏截图、看图、改一轮
 │   ├── steady-track.md      # 稳妥轨道：样张起步、逐屏稿、形式菜单
 │   ├── design-styles.md     # 92 种 HTML 原生风格库（网页 20 + PPT 20 + 信息图 20 + App 12 + 中文与东亚 12 + 小红书 8）
-│   ├── modules/             # 网页 / deck / 信息图 / 小红书 / 动画 五个模块手册
+│   ├── modules/             # 网页 / deck / 信息图 / 小红书 / App Store 宣传图 / 动画 六个模块手册
+│   ├── app-paradigms.md     # App 界面八条范式：两届 App Store Awards 入围作品的拆解与取图 id
 │   ├── slide-decks.md
 │   ├── editable-pptx.md
 │   ├── critique-guide.md
@@ -416,13 +437,17 @@ huashu-design/
 ├── scripts/                 # 导出工具链
 │   ├── render-video.js      # HTML → MP4
 │   ├── xhs_render.py        # 小红书图文 → 3:4 成图 + 体检
+│   ├── appstore_shots.py    # 拉真实 App 的商店截图拼成参考板
+│   ├── ref_card.py          # 量参考原图的色板与版面；做完和参照并排对回去（借一层，不借一身）
+│   ├── gen_image.py         # 不能生图的环境里借本机 Codex 生成素材图，只认真生成的
+│   ├── appstore_render.py   # App Store 宣传图 → 可上传成图 + 搜索结果预览 + 体检
 │   ├── convert-formats.sh   # MP4 → 60fps + GIF
 │   ├── add-music.sh         # MP4 + BGM
 │   ├── export_deck_pdf.mjs
 │   ├── export_deck_pptx.mjs
 │   ├── html2pptx.js
 │   ├── design_lint.py       # 设计体检、三版撞色撞骨架、外观账本
-│   ├── polish.py            # 打磨环：逐屏截图、缩略图检查、打磨记录
+│   ├── polish.py            # 打磨环：逐屏截图、打磨记录
 │   ├── learn.py             # 品味经验的读写
 │   ├── ref_board.py         # 把参考作品截成参考板
 │   ├── capabilities.py      # 探测本机能力（生图、兄弟 skill、Node、ffmpeg）
