@@ -1,11 +1,11 @@
 ---
 name: huashu-design
-description: 花叔Design——用HTML做高保真原型、幻灯片、动画、可视化与专家评审。任何新设计100%先出三个方向初稿给用户选（指定风格/品牌也不豁免），选定后才执行。触发词：做原型、PPT、幻灯片、动画、设计风格、评审、做个HTML页面、UI mockup、导出MP4/GIF、做个好看的。生产级Web App/需后端的系统不适用。
+description: 花叔Design——用HTML做高保真原型、幻灯片、动画、可视化与专家评审。任何新设计100%先出三个方向初稿给用户选（指定风格/品牌也不豁免），选定后才执行。触发词：做原型、App原型、微信小程序、App Store宣传图/商店截图、PPT、幻灯片、动画、设计风格、评审、做个HTML页面、UI mockup、导出MP4/GIF、做个好看的。生产级Web App/需后端的系统不适用。
 metadata:
   author: "花叔"
   homepage: "https://github.com/alchaincyf"
   repository: "https://github.com/alchaincyf/huashu-design"
-  version: "3.3.0"
+  version: "3.5.0"
 ---
 
 # 花叔Design · Huashu-Design
@@ -49,14 +49,14 @@ metadata:
 这份文件写的是每一步要达到什么、哪些地方不能错。怎么达到，有两种走法，随时可以切换：
 
 - **放手做**：你对这个题材有清楚的想法，就按自己的判断做——参考、风格库、手册里的做法都是起点和下限，做得比它们更好是被期待的。验证办法只有一个：摆出来，和参考并排，让用户看。窄桥照守，其余都可以超越。
-- **照着走**：读 `references/steady-track.md`，先写逐屏稿、从做到位的样张改起、逐条对清单。三种情况直接走这条：你是各家的轻量档模型（haiku / flash / mini / lite 这一档）；运行环境没有看图能力或上下文吃紧；脚本给了信号——`polish.py` 报「连续几屏只有文字和框」、缩略图检查有 ✗、红灯修了两轮还在。
+- **照着走**：读 `references/steady-track.md`，先写逐屏稿、从做到位的样张改起、逐条对清单。三种情况直接走这条：你是各家的轻量档模型（haiku / flash / mini / lite 这一档）；运行环境没有看图能力或上下文吃紧；脚本给了信号——`polish.py` 报「连续几屏只有文字和框」、红灯修了两轮还在。
 
 拿不准自己属于哪一种就先做，然后看脚本怎么说、看自己的截图。走稳妥轨道不丢人，交一份一百多行、全是小标题加卡片的页面才丢人。
 
 ## 适用范围
 
 用 HTML 做视觉产出：交互原型、设计变体探索、1920×1080 的 HTML deck、时间轴驱动的动画与视频、
-信息图与可视化。生产级 Web App、SEO 网站、需要后端的系统不走本 skill。
+信息图与可视化、App Store 宣传图。生产级 Web App、SEO 网站、需要后端的系统不走本 skill。
 
 ## 开工三件事（每个设计任务都做，几秒钟）
 
@@ -80,7 +80,9 @@ python3 "$HD/scripts/capabilities.py"            # 手里有什么：决定素�
 | 幻灯片、PPT、路演、课件、汇报 | `references/modules/deck.md` |
 | 信息图、数据可视化、长图 | `references/modules/infographic.md` |
 | 小红书图文、封面、轮播 | `references/modules/xiaohongshu.md` |
-| 手机 App / iOS 原型 | `references/app-prototype.md` |
+| 手机 App / iOS 原型 | `references/app-prototype.md`（构思时翻 `references/app-paradigms.md`） |
+| 微信小程序（原型、改版、交给 WorkBuddy 做成真小程序） | `references/modules/miniprogram.md`（同时用 App 手册的形态先行与展示板） |
+| App Store 宣传图、商店截图、上架图 | `references/modules/appstore.md` |
 | 动画、视频、宣传片、产品演示、带解说的视频、导出 MP4/GIF | `references/modules/motion.md`（模块内还有一层路由） |
 | 评审、打分、「好不好看」 | `references/critique-guide.md` |
 | 纯机械操作：HTML 转 PDF/PPTX、截图、修 bug、改文字 | 对应模块的「交付链/导出」一节，不过三方向门 |
@@ -114,15 +116,15 @@ python3 "$HD/scripts/capabilities.py"            # 手里有什么：决定素�
 任何会产出新视觉设计的任务，先出三个方向的**真实初稿**给用户选，用户选定后才执行。
 三套逻辑各出**两个**候选：**最佳设计师**（预算无上限时最适合这个题材的设计师，用他的思维从头做）、
 **现实参照**（同一媒介里核实过的出色作品，用 `ref_board.py` 截下来亲眼看，再拆它的设计语言）、
-**秒数轮盘**（从风格库随机抽，先看那个风格的样张图）。六个候选先画成一页缩略图（每格是这个候选最关键的一屏，真标题、真配色、主角素材看得见；
-`polish.py thumbs` 会把还是占位色块的格子挑出来），
-挑最强、彼此最不一样、不撞外观账本的三张做完整版，另外三张作为备选一起给用户看。
+**秒数轮盘**（从风格库随机抽，先看那个风格的样张图）。六个候选写成六张方向卡（不画缩略图页），
+挑最强、彼此最不一样、不撞外观账本的三张做完整版，另外三个用一两句话作为备选告诉用户。
 三个完整版各过一轮打磨环再摆出来。
+有来源的候选**借一层，不借一身**：看原图、量数字（`ref_card.py measure`），只借它的机制（结构、数据的形状、信息顺序），配色、字体、形状语言从这次的题材重新长；做完和参照并排跑认得出测试（`ref_card.py compare`），像它的新版本就换掉表达层重做。
 加选项，不加禁令：外观家族（暖纸衬线、深底单点缀……）本身不是问题，三版挤在同一家族才是；
 三张里最多一张用力过头（整页做成道具、套地铁图终端这类万能隐喻）——去掉这个手法信息反而更清楚，它就是过头。
 完整流程：`references/directions.md`。
 
-- 初稿形态：六格缩略图 1 页（备选），外加网页 / 信息图 / 原型每方向 1 个完整 HTML＋截图；deck 每方向 2 页代表页；动画每方向 1 张方向板（真实渲出的关键帧＋色板＋一句定位＋参照名）；封面 / 单图每方向 1 张真实出图；小红书多张图文每方向封面＋1 张内页
+- 初稿形态：网页 / 信息图 / 原型每方向 1 个完整 HTML＋截图；deck 每方向 2 页代表页；动画每方向 1 张方向板（真实渲出的关键帧＋色板＋一句定位＋参照名）；封面 / 单图每方向 1 张真实出图；小红书多张图文每方向封面＋1 张内页；App Store 宣传图每方向前三张
 - **摆出来就停**，结束回合等用户选，包括无人值守会话
 - 风格词收窄的是解释空间，不转移选择权：「Apple 风格」时三个方向是 Apple 语境里的三种诠释
 - 唯一豁免（都要在 `direction-approved.md` 记原话或理由）：用户本次会话明说跳过；同一项目内已选定方向后的迭代；非设计的机械操作
@@ -131,8 +133,9 @@ python3 "$HD/scripts/capabilities.py"            # 手里有什么：决定素�
 
 每个方向先定**主角素材**：真图、生成图、程序化材质、数据图像、实物仿制、巨字……别让三个方向都是纯排版。
 内容必需的图先取齐再设计（介绍动物的页面没有动物图 = 失败；介绍 App 的页面看不见 App 的界面 = 失败——没有截图就按用户给的真实内容把界面画出来），具名产品的 logo 逐个取到。
-T0 档人人都有（真图库、SVG/canvas/Three.js 程序化材质、数据即图像）；能生图、装了兄弟 skill 才往上走；
-缺的能力推荐安装一个，但绝不卡住。完整说明：`references/materials.md`。
+**该是图的地方放真的图**：界面里的头像、菜品、商品、场景、封面、角色，页面的主视觉和配图，不拿 emoji、手画 SVG、灰色占位块顶替。
+图按这个顺序找：你所在环境自带的生图工具（Codex、豆包、WorkBuddy 这类，直接生成，出几张挑最合适的）→ 自己不能生图（Claude Code、DeepSeek harness 这类）就借本机的 Codex（`scripts/gen_image.py`）→ 已装的生图 skill → 用户给的生图 API（没有就开口要一次，推荐 GPT-Image 2.6 或 Seedream 5.5，`gen_image.py --via api`）→ 开放许可的真图（`scripts/fetch_images.py`）；都走不通就告诉用户缺什么，那几处空着并写明，不算做完。
+`capabilities.py` 会列出这次走得通的来源。几何、图标、数据图、材质纹理本来就该用代码画（SVG / canvas / Three.js）。完整说明：`references/materials.md`。
 
 ### 5 · 模板装饰与诚实内容
 
@@ -170,7 +173,10 @@ T0 档人人都有（真图库、SVG/canvas/Three.js 程序化材质、数据即
 | 要什么 | 读 |
 |---|---|
 | 风格库（网页 / PPT / 信息图 / App / 中文与东亚 / 小红书，每种都有样张图）、色彩推导协议 | `references/design-styles.md`＋`assets/style-specimens/sheet-*.jpg` 总览 |
-| 把参考作品截成参考板，动手前亲眼看 | `scripts/ref_board.py` |
+| 把参考作品截成参考板，动手前亲眼看 | `scripts/ref_board.py`（App 的商店截图用 `scripts/appstore_shots.py`） |
+| 量参考原图的色板与版面、做完和参照并排对回去 | `scripts/ref_card.py` |
+| 界面里要用的图：借本机 Codex 或用生图 API 生成 / 取开放许可的真图 | `scripts/gen_image.py`、`scripts/fetch_images.py` |
+| App 界面的八条范式（界面即世界、签名物件、时间有形状……），也给网页借 | `references/app-paradigms.md`＋`assets/style-specimens/sheet-paradigm.jpg` |
 | 字体配对、中文排印、已被用烂名单 | `references/typography.md` |
 | 用户有 design system / codebase 时怎么用 | `references/design-context.md` |
 | 三方向选定后的主干流程、form 五问、异常处理、怎么问问题 | `references/workflow.md` |
@@ -183,7 +189,8 @@ T0 档人人都有（真图库、SVG/canvas/Three.js 程序化材质、数据即
 ## 收工四件事
 
 ```bash
-python3 "$HD/scripts/polish.py" shot <交付文件> --mobile                    # 最后一轮打磨：逐屏看原图，找不出值得改的三处才算完
+python3 "$HD/scripts/polish.py" shot <交付文件> --mobile                    # 最后一轮打磨：逐屏看原图，找不出值得改的三处才算完（App／小程序展示板不加 --mobile，手机已经在板上）
+python3 "$HD/scripts/offline.py" <交付文件>                               # 用了 CDN 的 React／Babel／Google Fonts：转成断网可开的单文件再交（别自己内联）
 python3 "$HD/scripts/design_lint.py" check <交付文件>                       # 红灯必修；黄灯（模板装饰）删掉
 python3 "$HD/scripts/design_lint.py" ledger add <最终文件> --project <名字>   # 记外观账，下个项目才知道要避开什么
 python3 "$HD/scripts/learn.py" harvest <项目目录>                            # 这次有什么值得记
@@ -205,6 +212,8 @@ python3 "$HD/scripts/learn.py" harvest <项目目录>                           
 5. 检查点问答改成产出里的 assumption 清单，gate 文件照写
 
 降级牺牲流程，不牺牲真实资产协议、可读性底线，也不跳过三方向门。降级之后怎么保住质量下限：`references/steady-track.md`。
+
+**在 WorkBuddy 里**（`capabilities.py` 报「WorkBuddy / CodeBuddy」）：自带生图（ImageGen，图右下角带水印，换下一个来源）；做的是微信小程序时，定稿后可以在同一个会话里直接做成真的小程序，见 `references/modules/miniprogram.md`「交给 WorkBuddy」。
 
 **在 DeepSeek Harness 桌面端里**（工具清单里有 `load_workspace_dependencies`）：
 - 先调用它。下文的 `python3` 换成它返回的 Python（自带 python-pptx、Pillow），`node` 换成它返回的 Node；不要 `pip install`，也不要去找系统 Python
